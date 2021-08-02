@@ -1,0 +1,240 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block body %}
+
+<div class="container" id="client-ins-objects">
+    <ul class="nav nav-tabs mt-5">
+        <li class="nav-item">
+            <a class="nav-link" href="/">Main</a>
+            </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="#">{{ title }}</a>
+        </li>
+    </ul>
+    <div class="row mt-4">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col-7 col-sm-2 col-md-12 col-lg-10 mx-auto d-block">
+                        <img class="img-fluid rounded-circle" src="{{ asset('uploads/photos/' ~ client.photo) }}" alt="{{ client.name }}">
+                    </div>
+                    <h5 class="card-title mt-4">{{ client.name }}</h5>
+                    <p class="card-text"><small class="text-muted">{{ client.city }}</small></p>
+
+                    <ul class="list-group list-group-flush nav flex-column nav-pills">
+                    {% for insObjName in insuranseObjects %}                    
+                    <li class="list-group-item"><a class="nav-link{% if loop.index == 1 %} active{%endif%}" href="#{{ insObjName }}">{{ insObjName }}</a></li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-primary" href="/client/{{ client.id }}/add-insurance/">Add insurance</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            {% for key, insObj in insuranceList %}
+            <table class="table table-light table-striped table-bordered{% if loop.index > 1 %} d-none{%endif%}" data-id="{{ key }}">
+                <thead>
+                  <tr>
+                    <th scope="col">{{ key }}<br>{{ insObj.address }}</th>
+                    {% for years, insObjInfo in insObj.by_years %}
+                    <th scope="col">{{ years }}</th>
+                    {% endfor %}
+                  </tr>
+                </thead>
+
+                <tbody>
+                    {% set break = false %}
+                    {% for insObjInfo in insObj.by_years %}
+                    {% if not break %}
+                    {% if insObjInfo.dwellingLimit %}
+                    <tr>
+                        <th scope="row">Dwelling limit</th>
+
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td>{{ insRowObjInfo.dwellingLimit }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+
+
+                    {% if insObjInfo.otherStructuresLimit %}
+                    <tr>
+                        <th scope="row">Other structures limit</th>
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td>{{ insRowObjInfo.otherStructuresLimit }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+
+
+                    {% if insObjInfo.personalPropertyLimit %}
+                    <tr>
+                        <th scope="row">Personal property limit</th>
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td>{{ insRowObjInfo.personalPropertyLimit }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+
+
+                    {% if insObjInfo.deductible %}
+                    <tr>
+                        <th scope="row">Deductible</th>
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td>{{ insRowObjInfo.deductible }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+
+
+                    {% if insObjInfo.premium %}
+                    <tr>
+                        <th scope="row">Premium</th>
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td>{{ insRowObjInfo.premium }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+
+
+                    {% if insObjInfo.totalCars %}
+                    <tr>
+                        <th scope="row">Total cars</th>
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td>{{ insRowObjInfo.totalCars }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+
+
+                    {% if insObjInfo.totalDrivers %}
+                    <tr>
+                        <th scope="row">Total drivers</th>
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td>{{ insRowObjInfo.totalDrivers }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+
+
+                    {% if insObjInfo.deductiblePremium %}
+                    <tr>
+                        <th scope="row">Deductible premium</th>
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td>{{ insRowObjInfo.deductiblePremium }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+
+
+                    {% if insObjInfo.fineArt %}
+                    <tr>
+                        <th scope="row">Fine art</th>
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td>{{ insRowObjInfo.fineArt }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+
+
+                    {% if insObjInfo.jewelry %}
+                    <tr>
+                        <th scope="row">Jewelry</th>
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td>{{ insRowObjInfo.jewelry }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+
+
+                    {% if insObjInfo.wine %}
+                    <tr>
+                        <th scope="row">Wine</th>
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td>{{ insRowObjInfo.wine }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+
+
+                    {% if insObjInfo.etc %}
+                    <tr>
+                        <th scope="row">Etc</th>
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td>{{ insRowObjInfo.etc }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+
+
+                    {% if insObjInfo.eachWithRLP %}
+                    <tr>
+                        <th scope="row">Each with respective limit and premium</th>
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td>{{ insRowObjInfo.eachWithRLP }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+
+
+                    {% if insObjInfo.expressLimit %}
+                    <tr>
+                        <th scope="row">Express limit</th>
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td>{{ insRowObjInfo.expressLimit }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+
+
+                    {% if insObjInfo.homesListed %}
+                    <tr>
+                        <th scope="row">Homes listed</th>
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td>{{ insRowObjInfo.homesListed }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+
+
+                    {% if insObjInfo.llcs %}
+                    <tr>
+                        <th scope="row">LlCs listed</th>
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td>{{ insRowObjInfo.llcs }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+
+                    <tr>
+                        <th class="table-secondary" scope="row"></th>
+                        {% for insRowObjInfo in insObj.by_years %}
+                        <td class="table-secondary">
+                            <a class="btn btn-link" href="/client/{{ client.id }}/insurance/edit/{{ insRowObjInfo.id }}">Edit</a>
+                            <a class="btn btn-link ins-delete" data-id="{{ insRowObjInfo.id }}" href="#">Delete</a>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    
+                    {% set break = true %}
+                    {% endif %}
+
+                    {% endfor %}
+                </tbody>
+
+            </table>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+{% block javascripts %}
+    <script src="/js/main.js"></script>
+{% endblock %}
+
+{% endblock %}

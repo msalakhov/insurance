@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Creating insurance object{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <ul class="nav nav-tabs mt-5">
+        <li class="nav-item">
+            <a class="nav-link" href="/">Main</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/client/{{ clientId }}">Back</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="#">New insurance object</a>
+        </li>
+    </ul>
+    <h1 class="text-center">New insurance object</h1>
+    <div class="row justify-content-md-center">
+        <div class="col-md-6">
+            {{ form(addInsuranceForm) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
