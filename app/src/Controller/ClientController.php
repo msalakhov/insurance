@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\ImageOptimizer;
 use App\Entity\Client;
 use App\Entity\ClientInsurance;
 use App\Repository\ClientRepository;
@@ -48,6 +49,9 @@ class ClientController extends AbstractController
                     //unable  to upload photo
                 }
 
+                $imageOptimazer = new ImageOptimizer();
+                $imageOptimazer->resize($this->getParameter('photoDir') . '/' . $fileName);
+
                 $client->setPhoto($fileName);
             }
 
@@ -82,14 +86,36 @@ class ClientController extends AbstractController
     {
         $client = new Client();
         $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
-        $client->setPhoto(
-            new File($this->getParameter('photoDir') . '/' . $client->getPhoto())
-        );
+        $photo = new File($this->getParameter('photoDir') . '/' . $client->getPhoto());
+        $fileName = $photo->getFilename();
+
+        $client->setPhoto($photo);
 
         $form = $this->createForm(CreateClientFormType::class, $client);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $photo */
+            if ($photo = $form->get('photo')->getData()) {
+                $fileName = bin2hex(random_bytes(6)) . '.' . $photo->guessExtension();
+
+                try {
+                    $photo->move(
+                        $this->getParameter('photoDir'), 
+                        $fileName
+                    );
+                } catch (FileException $e) {
+                    //unable  to upload photo
+                }
+
+                $imageOptimazer = new ImageOptimizer();
+                $imageOptimazer->resize($this->getParameter('photoDir') . '/' . $fileName);
+
+                
+            }
+
+            $client->setPhoto($fileName);
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
 
