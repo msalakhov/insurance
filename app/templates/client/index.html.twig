@@ -14,7 +14,11 @@
             <div class="card text-center" id="{{ client.id }}">
                 <div class="card-body">
                     <div class="col-7 col-sm-2 col-md-12 col-lg-10 mx-auto d-block">
+                        {% if client.photo == null %}
+                            <img class="img-fluid rounded-circle" src="{{ asset('uploads/photos/unknown.jpg') }}" alt="{{ client.name }}">
+                        {% else %}
                         <img class="img-fluid rounded-circle" src="{{ asset('uploads/photos/' ~ client.photo) }}" alt="{{ client.name }}">
+                        {% endif %}
                     </div>
                     <h5 class="card-title mt-4">
                         <a href="/client/{{ client.id }}">{{ client.name }}</a></h5>
