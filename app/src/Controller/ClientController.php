@@ -86,10 +86,12 @@ class ClientController extends AbstractController
     {
         $client = new Client();
         $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
-        $photo = new File($this->getParameter('photoDir') . '/' . $client->getPhoto());
-        $fileName = $photo->getFilename();
+        if ($client->getPhoto()) {
+            $photo = new File($this->getParameter('photoDir') . '/' . $client->getPhoto());
+            $fileName = $photo->getFilename();
 
-        $client->setPhoto($photo);
+            $client->setPhoto($photo);
+        }
 
         $form = $this->createForm(CreateClientFormType::class, $client);
         $form->handleRequest($request);
