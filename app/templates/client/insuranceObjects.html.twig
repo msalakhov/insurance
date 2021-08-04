@@ -18,7 +18,11 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col-7 col-sm-2 col-md-12 col-lg-10 mx-auto d-block">
-                        <img class="img-fluid rounded-circle" src="{{ asset('uploads/photos/' ~ client.photo) }}" alt="{{ client.name }}">
+                        {% if client.photo == null %}
+                            <img class="img-fluid rounded-circle" src="{{ asset('uploads/photos/unknown.jpg') }}" alt="{{ client.name }}">
+                        {% else %}
+                            <img class="img-fluid rounded-circle" src="{{ asset('uploads/photos/' ~ client.photo) }}" alt="{{ client.name }}">
+                        {% endif %}
                     </div>
                     <h5 class="card-title mt-4">{{ client.name }}</h5>
                     <p class="card-text"><small class="text-muted">{{ client.city }}</small></p>
