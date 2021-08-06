@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block body %}
+
+<div class="container" id="clients-list">
+    <div class="mt-5 mb-4">
+        <h1 class="text-center">{{ title }}</h1>
+    </div>
+    <div class="row">
+    {% for client in clients %}
+        <div class="col-sm-6 col-md-4 mb-4">
+            <div class="card text-center" id="{{ client.id }}">
+                <div class="card-body">
+                    <div class="col-7 col-sm-2 col-md-12 col-lg-10 mx-auto d-block">
+                        <img class="img-fluid rounded-circle" src="{{ asset('uploads/photos/' ~ client.photo) }}" alt="{{ client.name }}">
+                    </div>
+                    <h5 class="card-title mt-4">
+                        <a href="/client/{{ client.id }}">{{ client.name }}</a></h5>
+                    <p class="card-text"><small class="text-muted">{{ client.city }}</small></p>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">
+                        <a href="/client/edit/{{ client.id }}" class="btn btn-link edit-client" data-id="{{ client.id }}">Edit</a>
+                        <a href="#" class="btn btn-link delete-client" data-id="{{ client.id }}">Delete</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+
+    <div class="row justify-content-md-center">
+        <a class="btn btn-primary create-client" href="/client/create">Create client</a>
+    </div>
+
+</div>
+
+{% block javascripts %}
+    <script src="/js/main.js"></script>
+{% endblock %}
+
+{% endblock %}

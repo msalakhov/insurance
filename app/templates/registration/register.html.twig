@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+<div class="container">
+    <ul class="nav nav-tabs mt-5">
+        <li class="nav-item">
+            <a class="nav-link" href="/login">Back</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="#">Register</a>
+        </li>
+    </ul>
+    <h1 class="text-center mt-4">Register</h1>
+    <div class="row justify-content-md-center">
+        <div class="col-md-6">
+            {{ form(registrationForm) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
