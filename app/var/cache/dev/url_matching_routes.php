@@ -13,6 +13,15 @@ return [
         '/_profiler/search_bar' => [[['_route' => '_profiler_search_bar', '_controller' => 'web_profiler.controller.profiler::searchBarAction'], null, null, null, false, false, null]],
         '/_profiler/phpinfo' => [[['_route' => '_profiler_phpinfo', '_controller' => 'web_profiler.controller.profiler::phpinfoAction'], null, null, null, false, false, null]],
         '/_profiler/open' => [[['_route' => '_profiler_open_file', '_controller' => 'web_profiler.controller.profiler::openAction'], null, null, null, false, false, null]],
+        '/' => [
+            [['_route' => 'client', '_controller' => 'App\\Controller\\ClientController::index'], null, null, null, false, false, null],
+            [['_route' => 'index', '_controller' => 'App\\Controller\\ClientController::index'], null, null, null, false, false, null],
+        ],
+        '/client/create' => [[['_route' => 'app_client_create', '_controller' => 'App\\Controller\\ClientController::create'], null, null, null, false, false, null]],
+        '/register' => [[['_route' => 'app_register', '_controller' => 'App\\Controller\\RegistrationController::register'], null, null, null, false, false, null]],
+        '/login' => [[['_route' => 'app_login', '_controller' => 'App\\Controller\\UserAuthSecurityController::login'], null, null, null, false, false, null]],
+        '/logout' => [[['_route' => 'app_logout', '_controller' => 'App\\Controller\\UserAuthSecurityController::logout'], null, null, null, false, false, null]],
+        '/login_check' => [[['_route' => 'login_check'], null, null, null, false, false, null]],
     ],
     [ // $regexpList
         0 => '{^(?'
@@ -31,6 +40,16 @@ return [
                     .')'
                     .'|error/(\\d+)(?:\\.([^/]++))?(*:159)'
                 .')'
+                .'|/client/(?'
+                    .'|delete/([^/]++)(*:194)'
+                    .'|edit/([^/]++)(*:215)'
+                    .'|([^/]++)(?'
+                        .'|(*:234)'
+                        .'|/add\\-insurance(*:257)'
+                    .')'
+                    .'|insurance/delete/([^/]++)(*:291)'
+                    .'|([^/]++)/insurance/edit/([^/]++)(*:331)'
+                .')'
             .')/?$}sDu',
     ],
     [ // $dynamicRoutes
@@ -40,8 +59,14 @@ return [
         101 => [[['_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception_panel::body'], ['token'], null, null, false, false, null]],
         114 => [[['_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception_panel::stylesheet'], ['token'], null, null, false, false, null]],
         124 => [[['_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'], ['token'], null, null, false, true, null]],
-        159 => [
-            [['_route' => '_preview_error', '_controller' => 'error_controller::preview', '_format' => 'html'], ['code', '_format'], null, null, false, true, null],
+        159 => [[['_route' => '_preview_error', '_controller' => 'error_controller::preview', '_format' => 'html'], ['code', '_format'], null, null, false, true, null]],
+        194 => [[['_route' => 'app_client_delete', '_controller' => 'App\\Controller\\ClientController::delete'], ['id'], ['DELETE' => 0], null, false, true, null]],
+        215 => [[['_route' => 'app_client_edit', '_controller' => 'App\\Controller\\ClientController::edit'], ['id'], null, null, false, true, null]],
+        234 => [[['_route' => 'insuranceList', '_controller' => 'App\\Controller\\ClientController::insuranceObjects'], ['id'], null, null, false, true, null]],
+        257 => [[['_route' => 'app_client_addinsurance', '_controller' => 'App\\Controller\\ClientController::addInsurance'], ['id'], null, null, false, false, null]],
+        291 => [[['_route' => 'app_client_deleteinsurance', '_controller' => 'App\\Controller\\ClientController::deleteInsurance'], ['id'], ['DELETE' => 0], null, false, true, null]],
+        331 => [
+            [['_route' => 'app_client_editinsurance', '_controller' => 'App\\Controller\\ClientController::editInsurance'], ['clientId', 'id'], null, null, false, true, null],
             [null, null, null, null, false, false, 0],
         ],
     ],

@@ -48,27 +48,37 @@ class __TwigTemplate_1cd6e0838b28f435b23ce8926b2163868c1bea82a588b66018a20733246
 <html>
     <head>
         <meta charset=\"UTF-8\">
+        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+        <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css\" integrity=\"sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm\" crossorigin=\"anonymous\">
         <title>";
-        // line 5
+        // line 7
         $this->displayBlock('title', $context, $blocks);
         echo "</title>
         ";
-        // line 8
+        // line 10
         echo "        ";
         $this->displayBlock('stylesheets', $context, $blocks);
-        // line 11
+        // line 13
         echo "
         ";
-        // line 12
+        // line 14
         $this->displayBlock('javascripts', $context, $blocks);
-        // line 15
-        echo "    </head>
-    <body>
-        ";
         // line 17
+        echo "    </head>
+    <body style=\"background-color: #ecf3fd;\">
+        <script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js\" integrity=\"sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl\" crossorigin=\"anonymous\"></script>
+        <script src=\"https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js\"></script>
+        ";
+        // line 21
         $this->displayBlock('body', $context, $blocks);
-        // line 18
-        echo "    </body>
+        // line 22
+        echo "
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                bsCustomFileInput.init();
+            });
+        </script>
+    </body>
 </html>
 ";
         
@@ -79,7 +89,7 @@ class __TwigTemplate_1cd6e0838b28f435b23ce8926b2163868c1bea82a588b66018a20733246
 
     }
 
-    // line 5
+    // line 7
     public function block_title($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -98,7 +108,7 @@ class __TwigTemplate_1cd6e0838b28f435b23ce8926b2163868c1bea82a588b66018a20733246
 
     }
 
-    // line 8
+    // line 10
     public function block_stylesheets($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -108,9 +118,9 @@ class __TwigTemplate_1cd6e0838b28f435b23ce8926b2163868c1bea82a588b66018a20733246
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "stylesheets"));
 
-        // line 9
+        // line 11
         echo "            ";
-        // line 10
+        // line 12
         echo "        ";
         
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->leave($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof);
@@ -120,7 +130,7 @@ class __TwigTemplate_1cd6e0838b28f435b23ce8926b2163868c1bea82a588b66018a20733246
 
     }
 
-    // line 12
+    // line 14
     public function block_javascripts($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -130,9 +140,9 @@ class __TwigTemplate_1cd6e0838b28f435b23ce8926b2163868c1bea82a588b66018a20733246
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "javascripts"));
 
-        // line 13
+        // line 15
         echo "            ";
-        // line 14
+        // line 16
         echo "        ";
         
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->leave($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof);
@@ -142,7 +152,7 @@ class __TwigTemplate_1cd6e0838b28f435b23ce8926b2163868c1bea82a588b66018a20733246
 
     }
 
-    // line 17
+    // line 21
     public function block_body($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -167,7 +177,7 @@ class __TwigTemplate_1cd6e0838b28f435b23ce8926b2163868c1bea82a588b66018a20733246
 
     public function getDebugInfo()
     {
-        return array (  146 => 17,  136 => 14,  134 => 13,  124 => 12,  114 => 10,  112 => 9,  102 => 8,  83 => 5,  71 => 18,  69 => 17,  65 => 15,  63 => 12,  60 => 11,  57 => 8,  53 => 5,  47 => 1,);
+        return array (  156 => 21,  146 => 16,  144 => 15,  134 => 14,  124 => 12,  122 => 11,  112 => 10,  93 => 7,  75 => 22,  73 => 21,  67 => 17,  65 => 14,  62 => 13,  59 => 10,  55 => 7,  47 => 1,);
     }
 
     public function getSourceContext()
@@ -176,6 +186,8 @@ class __TwigTemplate_1cd6e0838b28f435b23ce8926b2163868c1bea82a588b66018a20733246
 <html>
     <head>
         <meta charset=\"UTF-8\">
+        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+        <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css\" integrity=\"sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm\" crossorigin=\"anonymous\">
         <title>{% block title %}Welcome!{% endblock %}</title>
         {# Run `composer require symfony/webpack-encore-bundle`
            and uncomment the following Encore helpers to start using Symfony UX #}
@@ -187,8 +199,16 @@ class __TwigTemplate_1cd6e0838b28f435b23ce8926b2163868c1bea82a588b66018a20733246
             {#{{ encore_entry_script_tags('app') }}#}
         {% endblock %}
     </head>
-    <body>
+    <body style=\"background-color: #ecf3fd;\">
+        <script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js\" integrity=\"sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl\" crossorigin=\"anonymous\"></script>
+        <script src=\"https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js\"></script>
         {% block body %}{% endblock %}
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                bsCustomFileInput.init();
+            });
+        </script>
     </body>
 </html>
 ", "base.html.twig", "/var/www/lux/templates/base.html.twig");
