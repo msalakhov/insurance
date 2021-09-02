@@ -1,0 +1,5 @@
+index:
+   path: /
+   controller: App\Controller\ClientController::index
+login_check:
+  path: /login_check
