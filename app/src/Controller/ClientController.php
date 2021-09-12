@@ -2,14 +2,18 @@
 
 namespace App\Controller;
 
+use App\Form\AutoInsuranceFormType;
+use App\Form\CollectablesInsuranceFormType;
+use App\Form\HomeInsuranceFormType;
+use App\Form\UmbrellaInsuranceFormType;
 use App\ImageOptimizer;
 use App\Entity\Client;
 use App\Entity\ClientInsurance;
+use App\InsuranceTypes;
 use App\Repository\ClientRepository;
 use App\Form\CreateClientFormType;
 use App\Form\CreateClientInsuranceFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\File;
@@ -84,7 +88,6 @@ class ClientController extends AbstractController
     #[Route('/client/edit/{id}')]
     public function edit(Request $request, $id): Response
     {
-        $client = new Client();
         $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
         if ($client->getPhoto()) {
             $photo = new File($this->getParameter('photoDir') . '/' . $client->getPhoto());
@@ -133,49 +136,132 @@ class ClientController extends AbstractController
     #[Route('/client/{id}', name: 'insuranceList')]
     public function insuranceObjects(ClientRepository $clientRepository, $id)
     {
-        $client = new Client();
         $client = $clientRepository->find($id);
 
-        $insuranceList = new ClientInsurance();
-        $insuranceList = $this->getDoctrine()->getRepository(ClientInsurance::class)->findBy(['clientId' => $id]);
+        $insuranceList = $this->getDoctrine()->getRepository(ClientInsurance::class)->findBy(['clientId' => $id], ['year' => 'desc']);
         $resInsuranceList = $insuranseObjects = null;
 
         if ($insuranceList) {
             /** @var ClientInsurance $insuranse */
             foreach ($insuranceList as $insuranse) {
-                $resInsuranceList[$insuranse->getName()]['by_years'][$insuranse->getYear()] = $insuranse;
-                $resInsuranceList[$insuranse->getName()]['address'] = $insuranse->getAddress();
+                $type = $insuranse->getInsuranceObjectsTypesId();
+                if (isset(InsuranceTypes::NAMES[$type]) === false) {
+                   continue;
+                }
+                $typeName = InsuranceTypes::NAMES[$type];
+                $resInsuranceList[$typeName][$insuranse->getYear()] = $insuranse;
             }
-
-            $insuranseObjects = array_keys($resInsuranceList);
         }
 
         return $this->render('client/insuranceObjects.html.twig', [
             'title' => 'Insurance objects',
             'client' => $client,
-            'insuranceList' => $resInsuranceList,
-            'insuranseObjects' => $insuranseObjects
+            'insuranceList' => $resInsuranceList
         ]);
     }
 
-    #[Route('/client/{id}/add-insurance')]
-    public function addInsurance(Request $request, $id)
+    #[Route('/client/{id}/add-insurance', name: 'add-insurance')]
+    public function addInsurance($id)
+    {
+        return $this->render('client/add-insurance.html.twig', [
+            'clientId' => $id
+        ]);
+    }
+
+    #[Route('/client/{id}/add-insurance-home', name: 'add-insurance-home')]
+    public function addInsuranceHome(Request $request, $id)
     {
         $clientInsurance = new ClientInsurance();
         $clientInsurance->setClientId($id);
 
-        $form = $this->createForm(CreateClientInsuranceFormType::class, $clientInsurance);
+        $form = $this->createForm(HomeInsuranceFormType::class, $clientInsurance);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+            $clientInsurance->setInsuranceObjectsTypesId(InsuranceTypes::HOME);
             $entityManager->persist($clientInsurance);
             $entityManager->flush();
 
             return $this->redirectToRoute('insuranceList', ['id' => $id]);
         }
 
-        return $this->render('client/add-insurance.html.twig', [
+        return $this->render('client/add-insurance-item.html.twig', [
+            'controller_name' => 'ClientController',
+            'addInsuranceForm' => $form->createView(),
+            'clientId' => $id
+        ]);
+    }
+
+    #[Route('/client/{id}/add-insurance-auto', name: 'add-insurance-auto')]
+    public function addInsuranceAuto(Request $request, $id)
+    {
+        $clientInsurance = new ClientInsurance();
+        $clientInsurance->setClientId($id);
+
+        $form = $this->createForm(AutoInsuranceFormType::class, $clientInsurance);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $clientInsurance->setInsuranceObjectsTypesId(InsuranceTypes::AUTO);
+            $entityManager->persist($clientInsurance);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('insuranceList', ['id' => $id]);
+        }
+
+        return $this->render('client/add-insurance-item.html.twig', [
+            'controller_name' => 'ClientController',
+            'addInsuranceForm' => $form->createView(),
+            'clientId' => $id
+        ]);
+    }
+
+    #[Route('/client/{id}/add-insurance-coll', name: 'add-insurance-coll')]
+    public function addInsuranceColl(Request $request, $id)
+    {
+        $clientInsurance = new ClientInsurance();
+        $clientInsurance->setClientId($id);
+
+        $form = $this->createForm(CollectablesInsuranceFormType::class, $clientInsurance);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $clientInsurance->setInsuranceObjectsTypesId(InsuranceTypes::COLLECTABLES);
+            $entityManager->persist($clientInsurance);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('insuranceList', ['id' => $id]);
+        }
+
+        return $this->render('client/add-insurance-item.html.twig', [
+            'controller_name' => 'ClientController',
+            'addInsuranceForm' => $form->createView(),
+            'clientId' => $id
+        ]);
+    }
+
+    #[Route('/client/{id}/add-insurance-umbrella', name: 'add-insurance-umbrella')]
+    public function addInsuranceUmbrella(Request $request, $id)
+    {
+        $clientInsurance = new ClientInsurance();
+        $clientInsurance->setClientId($id);
+
+        $form = $this->createForm(UmbrellaInsuranceFormType::class, $clientInsurance);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $clientInsurance->setInsuranceObjectsTypesId(InsuranceTypes::UMBRELLA);
+            $entityManager->persist($clientInsurance);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('insuranceList', ['id' => $id]);
+        }
+
+        return $this->render('client/add-insurance-item.html.twig', [
             'controller_name' => 'ClientController',
             'addInsuranceForm' => $form->createView(),
             'clientId' => $id
@@ -198,7 +284,6 @@ class ClientController extends AbstractController
     #[Route('/client/{clientId}/insurance/edit/{id}')]
     public function editInsurance(Request $request, $id, $clientId): Response
     {
-        $clientInsurance = new ClientInsurance();
         $clientInsurance = $this->getDoctrine()->getRepository(ClientInsurance::class)->find($id);
 
         $form = $this->createForm(CreateClientInsuranceFormType::class, $clientInsurance);

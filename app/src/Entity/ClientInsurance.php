@@ -18,15 +18,26 @@ class ClientInsurance
     private $id;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name;
+
+    /**
      * @ORM\Column(type="integer")
      */
     private $clientId;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $renewalDate;
 
     /**
      * @ORM\Column(type="integer")
      */
     private $insuranceObjectsTypesId;
 
+    //HOME
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -45,23 +56,39 @@ class ClientInsurance
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $personalPropertyLimit;
+    private $contents;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $deductible;
+    private $liability;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $lossOfUse;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $AOPDeductible;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $windDeductible;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $otherNotes;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $premium;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $totalCars;
-
+    //Auto
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -70,7 +97,33 @@ class ClientInsurance
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $deductiblePremium;
+    private $vehicles;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $pip;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $medicalPayments;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $OTCDeductible;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $COLLDeductible;
+
+    //Collectibles
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $jewelry;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -80,7 +133,7 @@ class ClientInsurance
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $jewelry;
+    private $silverware;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -90,27 +143,28 @@ class ClientInsurance
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $etc;
+    private $otherCollectable;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $eachWithRLP;
+    private $misc;
+
+    // Umbrella
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $excessLimit;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $expressLimit;
+    private $uninsured;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $homesListed;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $llcs;
+    private $motorist;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -118,264 +172,490 @@ class ClientInsurance
     private $year;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @return mixed
      */
-    private $name;
-
-    public function getId(): ?int
+    public function getId()
     {
         return $this->id;
     }
 
-    public function getClientId(): ?int
-    {
-        return $this->clientId;
-    }
-
-    public function setClientId(int $clientId): self
-    {
-        $this->clientId = $clientId;
-
-        return $this;
-    }
-
-    public function getInsuranceObjectsTypesId(): ?int
-    {
-        return $this->insuranceObjectsTypesId;
-    }
-
-    public function setInsuranceObjectsTypesId(int $insuranceObjectsTypesId): self
-    {
-        $this->insuranceObjectsTypesId = $insuranceObjectsTypesId;
-
-        return $this;
-    }
-
-    public function getAddress(): ?string
-    {
-        return $this->address;
-    }
-
-    public function setAddress(?string $address): self
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
-    public function getDwellingLimit(): ?string
-    {
-        return $this->dwellingLimit;
-    }
-
-    public function setDwellingLimit(string $dwellingLimit): self
-    {
-        $this->dwellingLimit = $dwellingLimit;
-
-        return $this;
-    }
-
-    public function getOtherStructuresLimit(): ?string
-    {
-        return $this->otherStructuresLimit;
-    }
-
-    public function setOtherStructuresLimit(?string $otherStructuresLimit): self
-    {
-        $this->otherStructuresLimit = $otherStructuresLimit;
-
-        return $this;
-    }
-
-    public function getPersonalPropertyLimit(): ?string
-    {
-        return $this->personalPropertyLimit;
-    }
-
-    public function setPersonalPropertyLimit(?string $personalPropertyLimit): self
-    {
-        $this->personalPropertyLimit = $personalPropertyLimit;
-
-        return $this;
-    }
-
-    public function getDeductible(): ?string
-    {
-        return $this->deductible;
-    }
-
-    public function setDeductible(?string $deductible): self
-    {
-        $this->deductible = $deductible;
-
-        return $this;
-    }
-
-    public function getPremium(): ?string
-    {
-        return $this->premium;
-    }
-
-    public function setPremium(?string $premium): self
-    {
-        $this->premium = $premium;
-
-        return $this;
-    }
-
-    public function getTotalCars(): ?string
-    {
-        return $this->totalCars;
-    }
-
-    public function setTotalCars(?string $totalCars): self
-    {
-        $this->totalCars = $totalCars;
-
-        return $this;
-    }
-
-    public function getTotalDrivers(): ?string
-    {
-        return $this->totalDrivers;
-    }
-
-    public function setTotalDrivers(?string $totalDrivers): self
-    {
-        $this->totalDrivers = $totalDrivers;
-
-        return $this;
-    }
-
-    public function getDeductiblePremium(): ?string
-    {
-        return $this->deductiblePremium;
-    }
-
-    public function setDeductiblePremium(?string $deductiblePremium): self
-    {
-        $this->deductiblePremium = $deductiblePremium;
-
-        return $this;
-    }
-
-    public function getFineArt(): ?string
-    {
-        return $this->fineArt;
-    }
-
-    public function setFineArt(?string $fineArt): self
-    {
-        $this->fineArt = $fineArt;
-
-        return $this;
-    }
-
-    public function getJewelry(): ?string
-    {
-        return $this->jewelry;
-    }
-
-    public function setJewelry(?string $jewelry): self
-    {
-        $this->jewelry = $jewelry;
-
-        return $this;
-    }
-
-    public function getWine(): ?string
-    {
-        return $this->wine;
-    }
-
-    public function setWine(?string $wine): self
-    {
-        $this->wine = $wine;
-
-        return $this;
-    }
-
-    public function getEtc(): ?string
-    {
-        return $this->etc;
-    }
-
-    public function setEtc(?string $etc): self
-    {
-        $this->etc = $etc;
-
-        return $this;
-    }
-
-    public function getEachWithRLP(): ?string
-    {
-        return $this->eachWithRLP;
-    }
-
-    public function setEachWithRLP(?string $eachWithRLP): self
-    {
-        $this->eachWithRLP = $eachWithRLP;
-
-        return $this;
-    }
-
-    public function getExpressLimit(): ?string
-    {
-        return $this->expressLimit;
-    }
-
-    public function setExpressLimit(?string $expressLimit): self
-    {
-        $this->expressLimit = $expressLimit;
-
-        return $this;
-    }
-
-    public function getHomesListed(): ?string
-    {
-        return $this->homesListed;
-    }
-
-    public function setHomesListed(?string $homesListed): self
-    {
-        $this->homesListed = $homesListed;
-
-        return $this;
-    }
-
-    public function getLlcs(): ?string
-    {
-        return $this->llcs;
-    }
-
-    public function setLlcs(?string $llcs): self
-    {
-        $this->llcs = $llcs;
-
-        return $this;
-    }
-
-    public function getYear(): ?string
-    {
-        return $this->year;
-    }
-
-    public function setYear(?string $year): self
-    {
-        $this->year = $year;
-
-        return $this;
-    }
-
-    public function getName(): ?string
+    /**
+     * @return mixed
+     */
+    public function getName()
     {
         return $this->name;
     }
 
-    public function setName(string $name): self
+    /**
+     * @param mixed $name
+     */
+    public function setName($name): void
     {
         $this->name = $name;
+    }
 
-        return $this;
+    /**
+     * @return mixed
+     */
+    public function getClientId()
+    {
+        return $this->clientId;
+    }
+
+    /**
+     * @param mixed $clientId
+     */
+    public function setClientId($clientId): void
+    {
+        $this->clientId = $clientId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRenewalDate()
+    {
+        return $this->renewalDate;
+    }
+
+    /**
+     * @param mixed $renewalDate
+     */
+    public function setRenewalDate($renewalDate): void
+    {
+        $this->renewalDate = $renewalDate;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getInsuranceObjectsTypesId()
+    {
+        return $this->insuranceObjectsTypesId;
+    }
+
+    /**
+     * @param mixed $insuranceObjectsTypesId
+     */
+    public function setInsuranceObjectsTypesId($insuranceObjectsTypesId): void
+    {
+        $this->insuranceObjectsTypesId = $insuranceObjectsTypesId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param mixed $address
+     */
+    public function setAddress($address): void
+    {
+        $this->address = $address;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDwellingLimit()
+    {
+        return $this->dwellingLimit;
+    }
+
+    /**
+     * @param mixed $dwellingLimit
+     */
+    public function setDwellingLimit($dwellingLimit): void
+    {
+        $this->dwellingLimit = $dwellingLimit;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOtherStructuresLimit()
+    {
+        return $this->otherStructuresLimit;
+    }
+
+    /**
+     * @param mixed $otherStructuresLimit
+     */
+    public function setOtherStructuresLimit($otherStructuresLimit): void
+    {
+        $this->otherStructuresLimit = $otherStructuresLimit;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getContents()
+    {
+        return $this->contents;
+    }
+
+    /**
+     * @param mixed $contents
+     */
+    public function setContents($contents): void
+    {
+        $this->contents = $contents;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLiability()
+    {
+        return $this->liability;
+    }
+
+    /**
+     * @param mixed $liability
+     */
+    public function setLiability($liability): void
+    {
+        $this->liability = $liability;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLossOfUse()
+    {
+        return $this->lossOfUse;
+    }
+
+    /**
+     * @param mixed $lossOfUse
+     */
+    public function setLossOfUse($lossOfUse): void
+    {
+        $this->lossOfUse = $lossOfUse;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAOPDeductible()
+    {
+        return $this->AOPDeductible;
+    }
+
+    /**
+     * @param mixed $AOPDeductible
+     */
+    public function setAOPDeductible($AOPDeductible): void
+    {
+        $this->AOPDeductible = $AOPDeductible;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWindDeductible()
+    {
+        return $this->windDeductible;
+    }
+
+    /**
+     * @param mixed $windDeductible
+     */
+    public function setWindDeductible($windDeductible): void
+    {
+        $this->windDeductible = $windDeductible;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOtherNotes()
+    {
+        return $this->otherNotes;
+    }
+
+    /**
+     * @param mixed $otherNotes
+     */
+    public function setOtherNotes($otherNotes): void
+    {
+        $this->otherNotes = $otherNotes;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPremium()
+    {
+        return $this->premium;
+    }
+
+    /**
+     * @param mixed $premium
+     */
+    public function setPremium($premium): void
+    {
+        $this->premium = $premium;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTotalDrivers()
+    {
+        return $this->totalDrivers;
+    }
+
+    /**
+     * @param mixed $totalDrivers
+     */
+    public function setTotalDrivers($totalDrivers): void
+    {
+        $this->totalDrivers = $totalDrivers;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVehicles()
+    {
+        return $this->vehicles;
+    }
+
+    /**
+     * @param mixed $vehicles
+     */
+    public function setVehicles($vehicles): void
+    {
+        $this->vehicles = $vehicles;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPip()
+    {
+        return $this->pip;
+    }
+
+    /**
+     * @param mixed $pip
+     */
+    public function setPip($pip): void
+    {
+        $this->pip = $pip;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMedicalPayments()
+    {
+        return $this->medicalPayments;
+    }
+
+    /**
+     * @param mixed $medicalPayments
+     */
+    public function setMedicalPayments($medicalPayments): void
+    {
+        $this->medicalPayments = $medicalPayments;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOTCDeductible()
+    {
+        return $this->OTCDeductible;
+    }
+
+    /**
+     * @param mixed $OTCDeductible
+     */
+    public function setOTCDeductible($OTCDeductible): void
+    {
+        $this->OTCDeductible = $OTCDeductible;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCOLLDeductible()
+    {
+        return $this->COLLDeductible;
+    }
+
+    /**
+     * @param mixed $COLLDeductible
+     */
+    public function setCOLLDeductible($COLLDeductible): void
+    {
+        $this->COLLDeductible = $COLLDeductible;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getJewelry()
+    {
+        return $this->jewelry;
+    }
+
+    /**
+     * @param mixed $jewelry
+     */
+    public function setJewelry($jewelry): void
+    {
+        $this->jewelry = $jewelry;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFineArt()
+    {
+        return $this->fineArt;
+    }
+
+    /**
+     * @param mixed $fineArt
+     */
+    public function setFineArt($fineArt): void
+    {
+        $this->fineArt = $fineArt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSilverware()
+    {
+        return $this->silverware;
+    }
+
+    /**
+     * @param mixed $silverware
+     */
+    public function setSilverware($silverware): void
+    {
+        $this->silverware = $silverware;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWine()
+    {
+        return $this->wine;
+    }
+
+    /**
+     * @param mixed $wine
+     */
+    public function setWine($wine): void
+    {
+        $this->wine = $wine;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOtherCollectable()
+    {
+        return $this->otherCollectable;
+    }
+
+    /**
+     * @param mixed $otherCollectable
+     */
+    public function setOtherCollectable($otherCollectable): void
+    {
+        $this->otherCollectable = $otherCollectable;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMisc()
+    {
+        return $this->misc;
+    }
+
+    /**
+     * @param mixed $misc
+     */
+    public function setMisc($misc): void
+    {
+        $this->misc = $misc;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getExcessLimit()
+    {
+        return $this->excessLimit;
+    }
+
+    /**
+     * @param mixed $excessLimit
+     */
+    public function setExcessLimit($excessLimit): void
+    {
+        $this->excessLimit = $excessLimit;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUninsured()
+    {
+        return $this->uninsured;
+    }
+
+    /**
+     * @param mixed $uninsured
+     */
+    public function setUninsured($uninsured): void
+    {
+        $this->uninsured = $uninsured;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMotorist()
+    {
+        return $this->motorist;
+    }
+
+    /**
+     * @param mixed $motorist
+     */
+    public function setMotorist($motorist): void
+    {
+        $this->motorist = $motorist;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getYear()
+    {
+        return $this->year;
+    }
+
+    /**
+     * @param mixed $year
+     */
+    public function setYear($year): void
+    {
+        $this->year = $year;
     }
 }

@@ -13,7 +13,7 @@
             <a class="nav-link" href="/client/{{ clientId }}">Back</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link active" href="#">New insurance object</a>
+            <a class="nav-link active" href="#">Home</a>
         </li>
     </ul>
     <br>
@@ -21,10 +21,7 @@
     <br>
     <div class="row justify-content-md-center">
         <div class="col-md-6">
-            <a class="btn btn-info" href="{{ path('add-insurance-home', {'id': clientId}) }}"> Home </a> &nbsp;&nbsp;
-            <a class="btn btn-info" href="{{ path('add-insurance-auto', {'id': clientId}) }}"> Auto </a>&nbsp;&nbsp;
-            <a class="btn btn-info" href="{{ path('add-insurance-coll', {'id': clientId}) }}"> Collectibles </a>&nbsp;&nbsp;
-            <a class="btn btn-info" href="{{ path('add-insurance-umbrella', {'id': clientId}) }}"> Umbrella </a>&nbsp;&nbsp;
+            {{ form(addInsuranceForm) }}
         </div>
     </div>
 </div>
