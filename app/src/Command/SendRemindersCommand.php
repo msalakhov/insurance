@@ -61,7 +61,7 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
 
             $output->writeln('start');
             $email = (new Email())
-                ->from('no-reply@insurance.com')
+                ->from('vismark47@gmail.com')
                 ->to($this->container->getParameter('sendTo'))
                 ->subject('Renewal date is coming')
                 ->text(sprintf(
