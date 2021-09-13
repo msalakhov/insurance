@@ -26,18 +26,6 @@ if (clientInsObjects) {
                 }).then(res => window.location.reload())
             }
         }
-
-        if (e.target.className === 'nav-link') {
-            document.querySelectorAll('.nav-link.active').forEach(function(navLink) {
-                navLink.classList.remove("active");
-            });
-            document.querySelectorAll('.table').forEach(function(table) {
-                table.classList.add('d-none');
-            });
-
-            e.target.classList.add('active');
-            document.querySelector("[data-id='" + e.target.getAttribute('href').replace('#', '') + "']").classList.remove('d-none');
-        }
     });
 }
 

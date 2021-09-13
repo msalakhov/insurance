@@ -268,7 +268,7 @@ class ClientController extends AbstractController
         ]);
     }
 
-    #[Route('/client/insurance/delete/{id}', methods:['DELETE'])]
+    #[Route('/client/insurance/delete/{id}', name: 'delete-ins', methods:['DELETE'])]
     public function deleteInsurance($id)
     {
         $clientInsurance = $this->getDoctrine()->getRepository(ClientInsurance::class)->find($id);
@@ -281,7 +281,7 @@ class ClientController extends AbstractController
         $response->send();
     }
 
-    #[Route('/client/{clientId}/insurance/edit/{id}')]
+    #[Route('/client/insurance/edit/{id}', name: 'edit-ins')]
     public function editInsurance(Request $request, $id, $clientId): Response
     {
         $clientInsurance = $this->getDoctrine()->getRepository(ClientInsurance::class)->find($id);
