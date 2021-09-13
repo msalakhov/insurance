@@ -50,7 +50,7 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
         $this->logger->info('Start emailing');
         $renewalDate = new \DateTime('+45 days');
         $renewalDate->setTime(0,0);
-        $this->logger->info('Renewal date ' . $renewalDate->format('d/m/Y H:i:s'));
+        $this->logger->info('Renewal date ' . $renewalDate->format('m/d/Y H:i:s'));
 
         /** @var ClientInsurance[] $ins */
         $ins = $this->entityManager->getRepository(ClientInsurance::class)->findBy(['renewalDate' => $renewalDate]);
@@ -66,7 +66,7 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
                 ->subject('Renewal date is coming')
                 ->text(sprintf(
                     "Client name: %s \n Insurance name: %s \n Renewal Date: %s",
-                    $client->getName(), $item->getName(), $item->getRenewalDate()->format('d/m/Y H:i:s'))
+                    $client->getName(), $item->getName(), $item->getRenewalDate()->format('m/d/Y H:i:s'))
                 );
 
             try {
