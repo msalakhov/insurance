@@ -66,8 +66,11 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
                 ->to($email)
                 ->subject('Renewal date is coming')
                 ->text(sprintf(
-                    "Client name: %s \n Insurance name: %s \n Renewal Date: %s",
-                    $client->getName(), $item->getName(), $item->getRenewalDate()->format('m/d/Y H:i:s'))
+                    "Hello dear client! \n 
+                    Your insurance %s is expiring \n
+                    Please contact me \n
+                    Renewal Date: %s",
+                    $item->getName(), $item->getRenewalDate()->format('m/d/Y H:i:s'))
                 );
 
             try {
