@@ -6,7 +6,7 @@ use App\Repository\ClientRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=ClientRepository::class)
+ * @ORM\Entity(repositoryClass="App\Repository\ClientRepository", repositoryClass=ClientRepository::class)
  */
 class Client
 {
@@ -31,6 +31,11 @@ class Client
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $photo;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $email;
 
     // public function __construct($name, $city, $photo)
     // {
@@ -78,5 +83,15 @@ class Client
         $this->photo = $photo;
 
         return $this;
+    }
+
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    public function setEmail($email): void
+    {
+        $this->email = $email;
     }
 }

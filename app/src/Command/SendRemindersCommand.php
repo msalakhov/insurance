@@ -59,10 +59,11 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
             /** @var Client $client */
             $client = $this->entityManager->getRepository(Client::class)->find($item->getClientId());
 
+            $email = $client->getEmail();
             $output->writeln('start');
             $email = (new Email())
                 ->from('vismark47@gmail.com')
-                ->to($this->container->getParameter('sendTo'))
+                ->to($email)
                 ->subject('Renewal date is coming')
                 ->text(sprintf(
                     "Client name: %s \n Insurance name: %s \n Renewal Date: %s",
@@ -70,10 +71,12 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
                 );
 
             try {
-                $this->mailer->send($email);
-                $this->logger->info('Email sent');
-                $output->writeln('Sent');
-                sleep(1);
+                if ($email !== null) {
+                    $this->mailer->send($email);
+                    $this->logger->info('Email sent', ['client' => $client->getName(), 'email'=> $client->getName()]);
+                    $output->writeln('Sent');
+                    sleep(1);
+                }
             } catch (TransportExceptionInterface $e) {
                 $this->logger->error($e->getMessage());
                 $output->writeln($e->getMessage());
