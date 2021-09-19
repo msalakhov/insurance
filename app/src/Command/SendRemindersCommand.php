@@ -76,7 +76,7 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
             try {
                 if ($email !== null) {
                     $this->mailer->send($email);
-                    $this->logger->info('Email sent', ['client' => $client->getName(), 'email'=> $client->getName()]);
+                    $this->logger->info('Email sent', ['client' => $client->getName(), 'email'=> $client->getEmail()]);
                     $output->writeln('Sent');
                     sleep(1);
                 }
