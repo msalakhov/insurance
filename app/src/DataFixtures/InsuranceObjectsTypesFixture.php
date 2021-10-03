@@ -10,7 +10,7 @@ class InsuranceObjectsTypesFixture extends Fixture
 {
     public function load(ObjectManager $manager)
     {
-        $arTypes = ['Home', 'Auto', 'Collection', 'Umbrella'];
+        $arTypes = ['Home', 'Auto', 'Collection', 'Umbrella', 'Other'];
         foreach ($arTypes as $type) {
             $insuranceObjectsTypes = new InsuranceObjectsTypes($type);
             $manager->persist($insuranceObjectsTypes);

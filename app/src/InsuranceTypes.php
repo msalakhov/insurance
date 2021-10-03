@@ -8,11 +8,13 @@ interface InsuranceTypes
     public const AUTO = 2;
     public const COLLECTABLES = 3;
     public const UMBRELLA = 4;
+    public const OTHER = 5;
 
     public const NAMES = [
         self::HOME => 'Home',
         self::AUTO => 'Auto',
         self::COLLECTABLES => 'Collectables',
         self::UMBRELLA => 'Umbrella',
+        self::OTHER => 'Other',
     ];
 }
