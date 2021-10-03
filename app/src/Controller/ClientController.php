@@ -13,7 +13,9 @@ use App\InsuranceTypes;
 use App\Repository\ClientRepository;
 use App\Form\CreateClientFormType;
 use App\Form\CreateClientInsuranceFormType;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\File;
@@ -26,9 +28,29 @@ class ClientController extends AbstractController
     #[Route('/', name: 'client')]
     public function index(ClientRepository $clientRepository)
     {
+        $arRes = [];
+        $clients = $clientRepository->findAll();
+        $insuranceList = $this->getDoctrine()->getRepository(ClientInsurance::class)->findAll();
+
+        /** @var ClientInsurance $insuranse */
+        foreach ($insuranceList as $insuranse) {
+            $userId = $insuranse->getClientId();
+            $arRes[$userId]['prem'][] = (int)$insuranse->getPremium();
+            $arRes[$userId]['renDates'][] = $insuranse->getRenewalDate();
+        }
+
+        foreach ($arRes as $userId => $arInsInfo) {
+            $arTotalPremiums[$userId] = array_sum($arInsInfo['prem']);
+            sort($arInsInfo['renDates']);
+            $arRenewals['min'] = array_shift($arInsInfo['renDates']);
+            $arRenewals['max'] = array_pop($arInsInfo['renDates']);
+        }
+
         return $this->render('client/index.html.twig', [
             'title' => 'Your clients',
-            'clients' => $clientRepository->findAll(),
+            'clients' => $clients,
+            'totalPrems' => $arTotalPremiums,
+            'renewals' => $arRenewals
         ]);
     }
 
