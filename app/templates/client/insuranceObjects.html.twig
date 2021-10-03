@@ -39,6 +39,17 @@
                     <a class="btn btn-primary" href="/client/{{ client.id }}/add-insurance/">Add insurance</a>
                 </div>
             </div>
+            <div class="card mt-4">
+                <div class="card-body" id="attachment-list">
+                    <h5 class="card-title mt-4">Attachments</h5>
+                    {% for attachment in attachmentList %}
+                        <p><a href="{{ asset('uploads/photos/' ~ attachment.path) }}" target="_blank">{{ attachment.name }}</a> <a href="#" class="badge badge-danger delete-attachment" data-id="{{ attachment.id }}" data-toggle="tooltip" data-placement="right" title="Delete attachment">&#215;</a></p>
+                    {% endfor %}
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-info" href="/client/{{ client.id }}/upload-file/">Upload document</a>
+                </div>
+            </div>
         </div>
         <div class="col-6">
             {% for key, insObj in insuranceList %}

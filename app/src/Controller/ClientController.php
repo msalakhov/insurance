@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Attachments;
 use App\Form\AutoInsuranceFormType;
 use App\Form\CollectablesInsuranceFormType;
 use App\Form\HomeInsuranceFormType;
@@ -9,6 +10,7 @@ use App\Form\UmbrellaInsuranceFormType;
 use App\ImageOptimizer;
 use App\Entity\Client;
 use App\Entity\ClientInsurance;
+use App\Form\AttachmentsFormType;
 use App\InsuranceTypes;
 use App\Repository\ClientRepository;
 use App\Form\CreateClientFormType;
@@ -153,10 +155,20 @@ class ClientController extends AbstractController
             }
         }
 
+        $attachmentsList = $this->getDoctrine()->getRepository(Attachments::class)->findBy(['userId' => $id]);
+        foreach ($attachmentsList as $attachment) {
+            $arResAttachmentList[] = [
+                'id' => $attachment->getId(),
+                'name' => base64_decode($attachment->getName()),
+                'path' => $attachment->getPath()
+            ];
+        }
+
         return $this->render('client/insuranceObjects.html.twig', [
             'title' => 'Insurance objects',
             'client' => $client,
-            'insuranceList' => $resInsuranceList
+            'insuranceList' => $resInsuranceList,
+            'attachmentList' => $arResAttachmentList
         ]);
     }
 
@@ -301,5 +313,58 @@ class ClientController extends AbstractController
             'addInsuranceForm' => $form->createView(),
             'clientId' => $clientId
         ]);
+    }
+
+    #[Route('/client/{id}/upload-file', name: 'upload-file')]
+    public function upload(Request $request, $id): Response
+    {
+        $attachment = new Attachments();
+        $form = $this->createForm(AttachmentsFormType::class, $attachment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $file */
+            if ($file = $form->get('path')->getData()) {
+                $fileName = base64_encode($file->getClientOriginalName());
+                $encodedFileName = bin2hex(random_bytes(6)) . '.' . $file->guessExtension();
+
+                try {
+                    $file->move(
+                        $this->getParameter('photoDir'), 
+                        $encodedFileName
+                    );
+                } catch (FileException $e) {
+                    //unable  to upload
+                }
+
+                $attachment->setPath($encodedFileName);
+                $attachment->setUserId($id);
+                $attachment->setName($fileName);
+            }
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($attachment);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('insuranceList', ['id' => $id]);
+        }
+
+        return $this->render('client/upload-file.html.twig', [
+            'controller_name' => 'ClientController',
+            'attachmentForm' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/client/delete-attachment/{id}', name: 'delete-attachment', methods:['DELETE'])]
+    public function deleteAttachment($id)
+    {
+        $attachment = $this->getDoctrine()->getRepository(Attachments::class)->find($id);
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $entityManager->remove($attachment);
+        $entityManager->flush();
+
+        $response = new Response();
+        $response->send();
     }
 }
