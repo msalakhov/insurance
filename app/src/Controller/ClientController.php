@@ -18,15 +18,12 @@ use App\InsuranceTypes;
 use App\Repository\ClientRepository;
 use App\Form\CreateClientFormType;
 use App\Form\CreateClientInsuranceFormType;
-use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class ClientController extends AbstractController
@@ -363,7 +360,7 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/{id}/insurance/{insId}/upload-file', name: 'insurance-upload-file')]
-    public function upload(Request $request, $id, $insId): Response
+    public function uploadIns(Request $request, $id, $insId): Response
     {
         $attachment = new InsuranceAttachments();
         $form = $this->createForm(InsuranceAttachmentsFormType::class, $attachment);
@@ -403,9 +400,22 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/insurance/delete-attachment/{attachmentId}', name: 'delete-ins-attachment', methods:['DELETE'])]
-    public function deleteAttachment($attachmentId)
+    public function deleteInsAttachment($attachmentId)
     {
         $attachment = $this->getDoctrine()->getRepository(InsuranceAttachments::class)->find($attachmentId);
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $entityManager->remove($attachment);
+        $entityManager->flush();
+
+        $response = new Response();
+        $response->send();
+    }
+
+    #[Route('/client/delete-attachment/{id}', name: 'delete-attachment', methods:['DELETE'])]
+    public function deleteAttachment($id)
+    {
+        $attachment = $this->getDoctrine()->getRepository(Attachments::class)->find($id);
         $entityManager = $this->getDoctrine()->getManager();
 
         $entityManager->remove($attachment);
@@ -453,18 +463,5 @@ class ClientController extends AbstractController
             'controller_name' => 'ClientController',
             'attachmentForm' => $form->createView(),
         ]);
-    }
-
-    #[Route('/client/delete-attachment/{id}', name: 'delete-attachment', methods:['DELETE'])]
-    public function deleteAttachment($id)
-    {
-        $attachment = $this->getDoctrine()->getRepository(Attachments::class)->find($id);
-        $entityManager = $this->getDoctrine()->getManager();
-
-        $entityManager->remove($attachment);
-        $entityManager->flush();
-
-        $response = new Response();
-        $response->send();
     }
 }
