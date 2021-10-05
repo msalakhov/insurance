@@ -225,7 +225,21 @@
                                     <td>{{ insObjInfo.motorist }}</td>
                                 </tr>
                             {% endif %}
-                        </table>
+                        <tr>
+                                    <td>Attachments</td>
+                                    <td>
+                                        {% if insAttachmentsList[insObjInfo.id] is defined %}
+                                            {% for insAttachment in insAttachmentsList[insObjInfo.id] %}
+                                                <p>
+                                                    <a href="{{ asset('uploads/photos/' ~ insAttachment.path) }}" target="_blank">{{ insAttachment.name }}</a>
+                                                    <a href="#" class="badge badge-danger delete-ins-attachment" data-id="{{ insAttachment.id }}" data-toggle="tooltip" data-placement="right" title="Delete attachment">&#215;</a>
+                                                </p>
+                                            {% endfor %}
+                                        {% endif %}
+                                        <a class="btn btn-info" href="/client/{{ client.id }}/insurance/{{ insObjInfo.id }}/upload-file/">Upload document</a>
+                                    </td>
+                                </tr>
+                            </table>
                     </div>
                 {% endfor %}
             </div>
@@ -252,6 +266,15 @@
                 let insId = $(this).attr('item-id');
                 if (confirm('Are you sure?')) {
                     fetch(`/client/insurance/delete/${insId}`, {
+                        method: 'DELETE'
+                    }).then(res => window.location.reload())
+                }
+            })
+
+            $(".delete-ins-attachment").click(function (){
+                let attachmentId = $(this).data('id');
+                if (confirm('Are you sure?')) {
+                    fetch(`/client/insurance/delete-attachment/${attachmentId}`, {
                         method: 'DELETE'
                     }).then(res => window.location.reload())
                 }

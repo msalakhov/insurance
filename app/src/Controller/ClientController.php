@@ -8,10 +8,12 @@ use App\Form\CollectablesInsuranceFormType;
 use App\Form\HomeInsuranceFormType;
 use App\Form\UmbrellaInsuranceFormType;
 use App\Form\OtherInsuranceFormType;
+use App\Form\InsuranceAttachmentsFormType;
 use App\ImageOptimizer;
 use App\Entity\Client;
 use App\Entity\ClientInsurance;
 use App\Form\AttachmentsFormType;
+use App\Entity\InsuranceAttachments;
 use App\InsuranceTypes;
 use App\Repository\ClientRepository;
 use App\Form\CreateClientFormType;
@@ -157,6 +159,14 @@ class ClientController extends AbstractController
                 }
                 $typeName = InsuranceTypes::NAMES[$type];
                 $resInsuranceList[$typeName][$insuranse->getYear()] = $insuranse;
+                $insAttachmentsList = $this->getDoctrine()->getRepository(InsuranceAttachments::class)->findBy(['insuranceId' => $insuranse->getId()]);
+                foreach ($insAttachmentsList as $attachment) {
+                    $arResAttachmentList[$insuranse->getId()][] = [
+                        'id' => $attachment->getId(),
+                        'name' => base64_decode($attachment->getName()),
+                        'path' => $attachment->getPath()
+                    ];
+                }
             }
         }
 
@@ -173,6 +183,7 @@ class ClientController extends AbstractController
             'title' => 'Insurance objects',
             'client' => $client,
             'insuranceList' => $resInsuranceList,
+            'insAttachmentsList' => $arResAttachmentList,
             'attachmentList' => $arResAttachmentList
         ]);
     }
@@ -345,6 +356,59 @@ class ClientController extends AbstractController
         ]);
     }
 
+    #[Route('/client/{id}/insurance/{insId}/upload-file', name: 'insurance-upload-file')]
+    public function upload(Request $request, $id, $insId): Response
+    {
+        $attachment = new InsuranceAttachments();
+        $form = $this->createForm(InsuranceAttachmentsFormType::class, $attachment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $file */
+            if ($file = $form->get('path')->getData()) {
+                $fileName = base64_encode($file->getClientOriginalName());
+                $encodedFileName = bin2hex(random_bytes(6)) . '.' . $file->guessExtension();
+
+                try {
+                    $file->move(
+                        $this->getParameter('photoDir'),
+                        $encodedFileName
+                    );
+                } catch (FileException $e) {
+                    //unable  to upload
+                }
+
+                $attachment->setPath($encodedFileName);
+                $attachment->setInsuranceId($insId);
+                $attachment->setName($fileName);
+            }
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($attachment);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('insuranceList', ['id' => $id]);
+        }
+
+        return $this->render('client/insurance-upload-file.html.twig', [
+            'controller_name' => 'ClientController',
+            'attachmentForm' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/client/insurance/delete-attachment/{attachmentId}', name: 'delete-ins-attachment', methods:['DELETE'])]
+    public function deleteAttachment($attachmentId)
+    {
+        $attachment = $this->getDoctrine()->getRepository(InsuranceAttachments::class)->find($attachmentId);
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $entityManager->remove($attachment);
+        $entityManager->flush();
+
+        $response = new Response();
+        $response->send();
+    }
+
     #[Route('/client/{id}/upload-file', name: 'upload-file')]
     public function upload(Request $request, $id): Response
     {
@@ -360,7 +424,7 @@ class ClientController extends AbstractController
 
                 try {
                     $file->move(
-                        $this->getParameter('photoDir'), 
+                        $this->getParameter('photoDir'),
                         $encodedFileName
                     );
                 } catch (FileException $e) {
