@@ -27,13 +27,18 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class ClientController extends AbstractController
 {
     #[Route('/', name: 'client')]
-    public function index(ClientRepository $clientRepository)
+    public function index(UserInterface $user, ClientRepository $clientRepository)
     {
-        $clients = $clientRepository->findAll();
+        if (in_array('ADMIN', $user->getRoles())) {
+            $clients = $clientRepository->findAll();
+        } else {
+            $clients = $clientRepository->findBy(['userId' => $user->getId()]);
+        }
 
         return $this->render('client/index.html.twig', [
             'title' => 'Your clients',
@@ -42,7 +47,7 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/create')]
-    public function create(Request $request): Response
+    public function create(UserInterface $user, Request $request): Response
     {
         $client = new Client();
         $form = $this->createForm(CreateClientFormType::class, $client);
@@ -67,6 +72,7 @@ class ClientController extends AbstractController
 
                 $client->setPhoto($fileName);
             }
+            $client->setUserId($user);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($client);

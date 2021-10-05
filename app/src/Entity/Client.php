@@ -38,6 +38,12 @@ class Client
     private $email;
 
     /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="clients")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $userId;
+
+    /**
      * @ORM\Column(type="date", nullable=true)
      */
     private $renewal_term;
@@ -108,6 +114,18 @@ class Client
     public function setRenewalTerm(?\DateTimeInterface $renewal_term): self
     {
         $this->renewal_term = $renewal_term;
+
+        return $this;
+    }
+
+    public function getUserId(): ?User
+    {
+        return $this->userId;
+    }
+
+    public function setUserId(?User $userId): self
+    {
+        $this->userId = $userId;
 
         return $this;
     }
