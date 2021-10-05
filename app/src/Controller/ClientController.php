@@ -7,6 +7,7 @@ use App\Form\AutoInsuranceFormType;
 use App\Form\CollectablesInsuranceFormType;
 use App\Form\HomeInsuranceFormType;
 use App\Form\UmbrellaInsuranceFormType;
+use App\Form\OtherInsuranceFormType;
 use App\ImageOptimizer;
 use App\Entity\Client;
 use App\Entity\ClientInsurance;
@@ -271,6 +272,31 @@ class ClientController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
             $clientInsurance->setInsuranceObjectsTypesId(InsuranceTypes::UMBRELLA);
+            $entityManager->persist($clientInsurance);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('insuranceList', ['id' => $id]);
+        }
+
+        return $this->render('client/add-insurance-item.html.twig', [
+            'controller_name' => 'ClientController',
+            'addInsuranceForm' => $form->createView(),
+            'clientId' => $id
+        ]);
+    }
+
+    #[Route('/client/{id}/add-insurance-other', name: 'add-insurance-other')]
+    public function addInsuranceOther(Request $request, $id)
+    {
+        $clientInsurance = new ClientInsurance();
+        $clientInsurance->setClientId($id);
+
+        $form = $this->createForm(OtherInsuranceFormType::class, $clientInsurance);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $clientInsurance->setInsuranceObjectsTypesId(InsuranceTypes::OTHER);
             $entityManager->persist($clientInsurance);
             $entityManager->flush();
 

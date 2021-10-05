@@ -182,6 +182,21 @@ class ClientInsurance
     private $min_auto_liability_sub_limit;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $lineOfBusiness;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $limits;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $endorsements;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -689,6 +704,42 @@ class ClientInsurance
     public function setMinAutoLiabilitySubLimit(?int $min_auto_liability_sub_limit): self
     {
         $this->min_auto_liability_sub_limit = $min_auto_liability_sub_limit;
+
+        return $this;
+    }
+
+    public function getLineOfBusiness(): ?string
+    {
+        return $this->lineOfBusiness;
+    }
+
+    public function setLineOfBusiness(?string $lineOfBusiness): self
+    {
+        $this->lineOfBusiness = $lineOfBusiness;
+
+        return $this;
+    }
+
+    public function getLimits(): ?string
+    {
+        return $this->limits;
+    }
+
+    public function setLimits(?string $limits): self
+    {
+        $this->limits = $limits;
+
+        return $this;
+    }
+
+    public function getEndorsements(): ?string
+    {
+        return $this->endorsements;
+    }
+
+    public function setEndorsements(?string $endorsements): self
+    {
+        $this->endorsements = $endorsements;
 
         return $this;
     }
