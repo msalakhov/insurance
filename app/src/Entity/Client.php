@@ -37,6 +37,11 @@ class Client
      */
     private $email;
 
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $renewal_term;
+
     // public function __construct($name, $city, $photo)
     // {
     //     $this->name = $name;
@@ -93,5 +98,17 @@ class Client
     public function setEmail($email): void
     {
         $this->email = $email;
+    }
+
+    public function getrenewal_term(): ?\DateTimeInterface
+    {
+        return $this->renewal_term;
+    }
+
+    public function setRenewalTerm(?\DateTimeInterface $renewal_term): self
+    {
+        $this->renewal_term = $renewal_term;
+
+        return $this;
     }
 }

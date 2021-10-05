@@ -13,7 +13,9 @@ use App\InsuranceTypes;
 use App\Repository\ClientRepository;
 use App\Form\CreateClientFormType;
 use App\Form\CreateClientInsuranceFormType;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\File;
@@ -26,9 +28,11 @@ class ClientController extends AbstractController
     #[Route('/', name: 'client')]
     public function index(ClientRepository $clientRepository)
     {
+        $clients = $clientRepository->findAll();
+
         return $this->render('client/index.html.twig', [
             'title' => 'Your clients',
-            'clients' => $clientRepository->findAll(),
+            'clients' => $clients,
         ]);
     }
 
