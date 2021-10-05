@@ -24,7 +24,7 @@
                         <a href="/client/{{ client.id }}">{{ client.name }}</a></h5>
                     <p class="card-text"><small class="text-muted">{{ client.city }}</small></p>
                     <div class="row">
-                        <div class="col-8"><small>Renewal term: {{ client.renewal_term|date("m/d/Y") }}</small></div>
+                        <div class="col-8"><small>Renewal term: {{ client.renewalterm|date("m/d/Y") }}</small></div>
                     </div>
                 </div>
                 <div class="card-footer">

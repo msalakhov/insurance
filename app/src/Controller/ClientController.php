@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class ClientController extends AbstractController
@@ -175,7 +176,7 @@ class ClientController extends AbstractController
 
         $attachmentsList = $this->getDoctrine()->getRepository(Attachments::class)->findBy(['userId' => $id]);
         foreach ($attachmentsList as $attachment) {
-            $arResAttachmentList[] = [
+            $arResAttachmentList2[] = [
                 'id' => $attachment->getId(),
                 'name' => base64_decode($attachment->getName()),
                 'path' => $attachment->getPath()
@@ -186,8 +187,8 @@ class ClientController extends AbstractController
             'title' => 'Insurance objects',
             'client' => $client,
             'insuranceList' => $resInsuranceList,
-            'insAttachmentsList' => $arResAttachmentList,
-            'attachmentList' => $arResAttachmentList
+            'insAttachmentsList' => $arResAttachmentList ?? [],
+            'attachmentList' => $arResAttachmentList2 ?? []
         ]);
     }
 

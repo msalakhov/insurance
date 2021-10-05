@@ -106,7 +106,7 @@ class Client
         $this->email = $email;
     }
 
-    public function getrenewal_term(): ?\DateTimeInterface
+    public function getRenewalTerm(): ?\DateTimeInterface
     {
         return $this->renewal_term;
     }

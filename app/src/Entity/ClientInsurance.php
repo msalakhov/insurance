@@ -174,12 +174,12 @@ class ClientInsurance
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $min_home_liability_sub_limit;
+    private $minHomeLiabilitySubLimit;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $min_auto_liability_sub_limit;
+    private $minAutoLiabilitySubLimit;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -686,24 +686,24 @@ class ClientInsurance
 
     public function getMinHomeLiabilitySubLimit(): ?int
     {
-        return $this->min_home_liability_sub_limit;
+        return $this->minHomeLiabilitySubLimit;
     }
 
-    public function setMinHomeLiabilitySubLimit(?int $min_home_liability_sub_limit): self
+    public function setMinHomeLiabilitySubLimit(?int $minHomeLiabilitySubLimit): self
     {
-        $this->min_home_liability_sub_limit = $min_home_liability_sub_limit;
+        $this->minHomeLiabilitySubLimit = $minHomeLiabilitySubLimit;
 
         return $this;
     }
 
     public function getMinAutoLiabilitySubLimit(): ?int
     {
-        return $this->min_auto_liability_sub_limit;
+        return $this->minAutoLiabilitySubLimit;
     }
 
-    public function setMinAutoLiabilitySubLimit(?int $min_auto_liability_sub_limit): self
+    public function setMinAutoLiabilitySubLimit(?int $minAutoLiabilitySubLimit): self
     {
-        $this->min_auto_liability_sub_limit = $min_auto_liability_sub_limit;
+        $this->minAutoLiabilitySubLimit = $minAutoLiabilitySubLimit;
 
         return $this;
     }
