@@ -172,6 +172,16 @@ class ClientInsurance
     private $year;
 
     /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $min_home_liability_sub_limit;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $min_auto_liability_sub_limit;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -657,5 +667,29 @@ class ClientInsurance
     public function setYear($year): void
     {
         $this->year = $year;
+    }
+
+    public function getMinHomeLiabilitySubLimit(): ?int
+    {
+        return $this->min_home_liability_sub_limit;
+    }
+
+    public function setMinHomeLiabilitySubLimit(?int $min_home_liability_sub_limit): self
+    {
+        $this->min_home_liability_sub_limit = $min_home_liability_sub_limit;
+
+        return $this;
+    }
+
+    public function getMinAutoLiabilitySubLimit(): ?int
+    {
+        return $this->min_auto_liability_sub_limit;
+    }
+
+    public function setMinAutoLiabilitySubLimit(?int $min_auto_liability_sub_limit): self
+    {
+        $this->min_auto_liability_sub_limit = $min_auto_liability_sub_limit;
+
+        return $this;
     }
 }

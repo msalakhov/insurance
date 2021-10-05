@@ -6,6 +6,7 @@ use App\Entity\ClientInsurance;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -24,6 +25,8 @@ class UmbrellaInsuranceFormType extends AbstractType
             ->add('motorist')
             ->add('premium')
             ->add('renewalDate', DateType::class)
+            ->add('min_home_liability_sub_limit', NumberType::class, ['label' => 'Minimum Home Liability Sub-Limit'])
+            ->add('min_auto_liability_sub_limit', NumberType::class, ['label' => 'Minimum Auto Liability Sub-Limit'])
             ->add('submit', SubmitType::class)
         ;
     }
