@@ -53,12 +53,12 @@
         </div>
         <div class="col-8">
             {% for key, insObj in insuranceList %}
-            <div class="d-flex flex-row ins-items ins-items-name-{{ key }} {% if loop.index > 1 %}d-none{%endif%}">
+            <div class="flex-row ins-items ins-items-name-{{ key }} {% if loop.index > 1 %}d-none{% else %} d-flex {% endif %}">
                 {% for keyYear, insObjInfo in insObj %}
                     <div class="p-2">
                         <h3 style="display:inline-block; vertical-align:top"> Year - {{ insObjInfo.year }}</h3>
-                        <button style="display:inline-block" class="btn btn-danger btn-sm" item-id="{{ insObjInfo.id }}" id="ins-delete">Delete</button>
-                        <button style="display:inline-block" class="btn btn-warning btn-sm disabled">Edit</button>
+                        <a href="#" class="btn btn-danger btn-sm" item-id="{{ insObjInfo.id }}" id="ins-delete">Delete</a>
+                        <a href="/client/insurance/edit/{{ insObjInfo.id }}" class="btn btn-warning btn-sm">Edit</a>
                         <br>
                         <table class="table table-light table-striped table-bordered">
                             {% if insObjInfo.name %}
@@ -258,8 +258,8 @@
                 $(this).addClass("active");
 
                 let insName = $(this).attr('item-name');
-                $(".ins-items").addClass('d-none');
-                $(".ins-items-name-" + insName).removeClass('d-none');
+                $(".ins-items").removeClass('d-flex').addClass('d-none');
+                $(".ins-items-name-" + insName).removeClass('d-none').addClass('d-flex');
             })
 
             $("#ins-delete").click(function (){

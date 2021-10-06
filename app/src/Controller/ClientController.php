@@ -339,24 +339,43 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/insurance/edit/{id}', name: 'edit-ins')]
-    public function editInsurance(Request $request, $id, $clientId): Response
+    public function editInsurance(UserInterface $user, Request $request, $id): Response
     {
-        $clientInsurance = $this->getDoctrine()->getRepository(ClientInsurance::class)->find($id);
+        $insuranse = $this->getDoctrine()->getRepository(ClientInsurance::class)->find($id);
+        $type = $insuranse->getInsuranceObjectsTypesId();
+        $typeName = InsuranceTypes::NAMES[$type];
 
-        $form = $this->createForm(CreateClientInsuranceFormType::class, $clientInsurance);
+        switch($typeName) {
+            case 'Home':
+                $form = $this->createForm(HomeInsuranceFormType::class, $insuranse);
+                break;
+            case 'Auto':
+                $form = $this->createForm(AutoInsuranceFormType::class, $insuranse);
+                break;
+            case 'Collectables':
+                $form = $this->createForm(CollectablesInsuranceFormType::class, $insuranse);
+                break;
+            case 'Umbrella':
+                $form = $this->createForm(UmbrellaInsuranceFormType::class, $insuranse);
+                break;
+            case 'Other':
+                $form = $this->createForm(OtherInsuranceFormType::class, $insuranse);
+                break;
+        }
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
 
-            return $this->redirectToRoute('insuranceList', ['id' => $clientId]);
+            return $this->redirectToRoute('insuranceList', ['id' => $user->getId()]);
         }
 
         return $this->render('client/editInsurance.html.twig', [
             'controller_name' => 'ClientController',
             'addInsuranceForm' => $form->createView(),
-            'clientId' => $clientId
+            'clientId' => $user->getId()
         ]);
     }
 

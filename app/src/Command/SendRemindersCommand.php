@@ -59,30 +59,35 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
             /** @var Client $client */
             $client = $this->entityManager->getRepository(Client::class)->find($item->getClientId());
 
-            $email = $client->getEmail();
-            $output->writeln('start');
-            $email = (new Email())
-                ->from('vismark47@gmail.com')
-                ->to($email)
-                ->subject('Renewal date is coming')
-                ->text(sprintf(
-                    "Hello dear client! \n 
-                    Your insurance %s is expiring \n
-                    Please contact me \n
-                    Renewal Date: %s",
-                    $item->getName(), $item->getRenewalDate()->format('m/d/Y H:i:s'))
-                );
+            if (!(bool)$client->getIsNotifyed()) {
+                $client->setIsNotifyed(true);
+                $this->entityManager->flush();
 
-            try {
-                if ($email !== null) {
-                    $this->mailer->send($email);
-                    $this->logger->info('Email sent', ['client' => $client->getName(), 'email'=> $client->getEmail()]);
-                    $output->writeln('Sent');
-                    sleep(1);
+                $email = $client->getEmail();
+                $output->writeln('start');
+                $email = (new Email())
+                    ->from('vismark47@gmail.com')
+                    ->to($email)
+                    ->subject('Renewal date is coming')
+                    ->text(sprintf(
+                        "Hello dear client! \n 
+                        Your insurance %s is expiring \n
+                        Please contact me \n
+                        Renewal Date: %s",
+                        $item->getName(), $item->getRenewalDate()->format('m/d/Y H:i:s'))
+                    );
+
+                try {
+                    if ($email !== null) {
+                        $this->mailer->send($email);
+                        $this->logger->info('Email sent', ['client' => $client->getName(), 'email'=> $client->getEmail()]);
+                        $output->writeln('Sent');
+                        sleep(1);
+                    }
+                } catch (TransportExceptionInterface $e) {
+                    $this->logger->error($e->getMessage());
+                    $output->writeln($e->getMessage());
                 }
-            } catch (TransportExceptionInterface $e) {
-                $this->logger->error($e->getMessage());
-                $output->writeln($e->getMessage());
             }
         }
 
