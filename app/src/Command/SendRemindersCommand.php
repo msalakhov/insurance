@@ -56,14 +56,11 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
         $ins = $this->entityManager->getRepository(ClientInsurance::class)->findBy(['renewalDate' => $renewalDate]);
         foreach ($ins as $item) {
             if (!(bool)$item->getIsNotifyed()) {
-                $item->setIsNotifyed(true);
-                $this->entityManager->flush();
-
+                $isNotyfied = false;
                 $this->logger->info('Insurance name'. $item->getName() . '- id:' . $item->getId());
+                
                 /** @var Client $client */
                 $client = $this->entityManager->getRepository(Client::class)->find($item->getClientId());
-
-
                 $email = $client->getEmail();
                 $output->writeln('start');
                 $email = (new Email())
@@ -84,10 +81,15 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
                         $this->logger->info('Email sent', ['client' => $client->getName(), 'email'=> $client->getEmail()]);
                         $output->writeln('Sent');
                         sleep(1);
+                        $isNotyfied = true;
                     }
                 } catch (TransportExceptionInterface $e) {
                     $this->logger->error($e->getMessage());
                     $output->writeln($e->getMessage());
+                    $isNotyfied = false;
+                } finally {
+                    $item->setIsNotifyed($isNotyfied);
+                    $this->entityManager->flush();
                 }
             }
         }
