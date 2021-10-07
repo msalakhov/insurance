@@ -197,6 +197,11 @@ class ClientInsurance
     private $endorsements;
 
     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isNotifyed;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -740,6 +745,18 @@ class ClientInsurance
     public function setEndorsements(?string $endorsements): self
     {
         $this->endorsements = $endorsements;
+
+        return $this;
+    }
+
+    public function getIsNotifyed(): ?bool
+    {
+        return $this->isNotifyed;
+    }
+
+    public function setIsNotifyed(bool $isNotifyed): self
+    {
+        $this->isNotifyed = $isNotifyed;
 
         return $this;
     }
