@@ -55,13 +55,14 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
         /** @var ClientInsurance[] $ins */
         $ins = $this->entityManager->getRepository(ClientInsurance::class)->findBy(['renewalDate' => $renewalDate]);
         foreach ($ins as $item) {
-            $this->logger->info('Insurance name'. $item->getName() . '- id:' . $item->getId());
-            /** @var Client $client */
-            $client = $this->entityManager->getRepository(Client::class)->find($item->getClientId());
-
-            if (!(bool)$client->getIsNotifyed()) {
-                $client->setIsNotifyed(true);
+            if (!(bool)$item->getIsNotifyed()) {
+                $item->setIsNotifyed(true);
                 $this->entityManager->flush();
+
+                $this->logger->info('Insurance name'. $item->getName() . '- id:' . $item->getId());
+                /** @var Client $client */
+                $client = $this->entityManager->getRepository(Client::class)->find($item->getClientId());
+
 
                 $email = $client->getEmail();
                 $output->writeln('start');
