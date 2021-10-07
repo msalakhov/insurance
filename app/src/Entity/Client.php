@@ -48,6 +48,11 @@ class Client
      */
     private $renewal_term;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isNotifyed;
+
     // public function __construct($name, $city, $photo)
     // {
     //     $this->name = $name;
@@ -126,6 +131,18 @@ class Client
     public function setUserId(?User $userId): self
     {
         $this->userId = $userId;
+
+        return $this;
+    }
+
+    public function getIsNotifyed(): ?bool
+    {
+        return $this->isNotifyed;
+    }
+
+    public function setIsNotifyed(bool $isNotifyed): self
+    {
+        $this->isNotifyed = $isNotifyed;
 
         return $this;
     }
