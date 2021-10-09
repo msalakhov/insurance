@@ -5,6 +5,13 @@
 {% block body %}
 
 <div class="container" id="clients-list">
+    {% if app.user %}
+        <div class="row justify-content-end">
+            <div class="p-2 border-bottom">
+                {{ app.user.username }}, <a href="{{ path('app_logout') }}">logout</a>
+            </div>
+        </div>
+    {% endif %}
     <div class="mt-5 mb-4">
         <h1 class="text-center">{{ title }}</h1>
     </div>
