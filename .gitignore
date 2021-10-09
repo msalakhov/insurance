@@ -3,3 +3,5 @@ app/var/*
 app/vendor/*
 !db
 db/*
+!app/public
+app/public/*
