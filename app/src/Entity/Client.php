@@ -37,8 +37,6 @@ class Client
 
     /**
      * @ORM\Column(type="string", nullable=false)
-     *
-     * @Assert\Email()
      */
     private $email;
 
