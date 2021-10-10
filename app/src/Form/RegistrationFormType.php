@@ -41,8 +41,8 @@ class RegistrationFormType extends AbstractType
                 'invalid_message' => 'The password fields must match.',
                 // 'options' => ['attr' => ['class' => 'password-field']],
                 'required' => true,
-                'first_options'  => ['label' => 'Password'],
-                'second_options' => ['label' => 'Repeat Password'],
+                'first_options'  => ['placeholder' => 'Password'],
+                'second_options' => ['placeholder' => 'Repeat password'],
                 'constraints' => [
                     new Length([
                        'min' => 6,
@@ -52,17 +52,6 @@ class RegistrationFormType extends AbstractType
                    ]),
                 ],
                 ])
-            // ->add('plainPassword', PasswordType::class, [
-            //     // instead of being set onto the object directly,
-            //     // this is read and encoded in the controller
-            //
-            //     'attr' => [
-            //         'autocomplete' => 'new-password',
-            //         'placeholder' => 'Plain password'
-            //     ],
-            //
-            //     'label' => false,
-            // ])
             ->add('submit', SubmitType::class, [
                 'attr' => ['class' => 'btn btn-primary btn-block mt-5']
             ])
