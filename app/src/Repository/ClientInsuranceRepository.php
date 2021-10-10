@@ -39,11 +39,14 @@ class ClientInsuranceRepository extends ServiceEntityRepository
 
     public function findInsLteDate(\DateTime $dateTime): array
     {
+        $from = new \DateTime('-1 day');
         $qb = $this->createQueryBuilder('ci');
 
         $qb
-            ->andWhere($qb->expr()->lte('ci.renewalDate', ':date'))
-            ->setParameter(':date', $dateTime->format('Y-m-d'));
+            ->andWhere($qb->expr()->gte('ci.renewalDate', ':from'))
+            ->andWhere($qb->expr()->lte('ci.renewalDate', ':to'))
+            ->setParameter(':from', $from->format('Y-m-d'))
+            ->setParameter(':to', $dateTime->format('Y-m-d'));
 
         return $qb->getQuery()->getResult();
     }

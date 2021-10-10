@@ -198,6 +198,7 @@ class ClientInsurance
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
+     * @var bool
      */
     private $isNotifyed;
 
@@ -749,7 +750,7 @@ class ClientInsurance
         return $this;
     }
 
-    public function getIsNotifyed(): ?bool
+    public function isNotifyed(): ?bool
     {
         return $this->isNotifyed;
     }

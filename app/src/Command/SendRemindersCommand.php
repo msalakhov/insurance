@@ -49,52 +49,44 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->logger->info('Start emailing');
         $renewalDate = new \DateTime('+45 days');
         $renewalDate->setTime(0,0);
-        $this->logger->info('Renewal date ' . $renewalDate->format('m/d/Y H:i:s'));
+        $this->logger->info('Start emailing. Renewal date ' . $renewalDate->format('m/d/Y H:i:s'));
 
         /** @var ClientInsuranceRepository $repo */
         $repo = $this->entityManager->getRepository(ClientInsurance::class);
         /** @var ClientInsurance[] $ins */
         $ins = $repo->findInsLteDate($renewalDate);
+
         foreach ($ins as $item) {
-            if (!(bool)$item->getIsNotifyed()) {
-                $isNotyfied = false;
-                $this->logger->info('Insurance name'. $item->getName() . '- id:' . $item->getId());
-                
+            try {
+                if ((bool)$item->isNotifyed() === true) {
+                    continue;
+                }
+
+                $this->logger->info('Insurance name: '. $item->getName() . ' - id: ' . $item->getId());
+
                 /** @var Client $client */
                 $client = $this->entityManager->getRepository(Client::class)->find($item->getClientId());
-                $email = $client->getEmail();
-                $output->writeln('start');
+
                 $email = (new Email())
                     ->from(new Address('no-reply@insurance.com', 'Insurance Mail Bot'))
-                    ->to($email)
+                    ->to($client->getEmail() ?? '')
                     ->subject('Renewal date is coming')
                     ->text(sprintf(
-                        "Hello dear client! \n 
-                        Your insurance %s is expiring \n
-                        Please contact me \n
-                        Renewal Date: %s",
+                        "Hello dear client!\nYour insurance %s is expiring\nPlease contact me\nRenewal Date: %s",
                         $item->getName(), $item->getRenewalDate()->format('m/d/Y H:i:s'))
                     );
 
-                try {
-                    if ($email !== null) {
-                        $this->mailer->send($email);
-                        $this->logger->info('Email sent', ['client' => $client->getName(), 'email'=> $client->getEmail()]);
-                        $output->writeln('Sent');
-                        sleep(1);
-                        $isNotyfied = true;
-                    }
-                } catch (TransportExceptionInterface $e) {
-                    $this->logger->error($e->getMessage());
-                    $output->writeln($e->getMessage());
-                    $isNotyfied = false;
-                } finally {
-                    $item->setIsNotifyed($isNotyfied);
-                    $this->entityManager->flush();
-                }
+                $this->mailer->send($email);
+                $this->logger->info('Email sent', ['client' => $client->getName(), 'email'=> $client->getEmail()]);
+                $item->setIsNotifyed(true);
+                sleep(1);
+            } catch (TransportExceptionInterface $e) {
+                $this->logger->error($e->getMessage());
+                $item->setIsNotifyed(false);
+            } finally {
+                $this->entityManager->flush();
             }
         }
 
