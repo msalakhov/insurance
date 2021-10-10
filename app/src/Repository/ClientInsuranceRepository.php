@@ -36,15 +36,15 @@ class ClientInsuranceRepository extends ServiceEntityRepository
     }
     */
 
-    /*
-    public function findOneBySomeField($value): ?ClientInsurance
+
+    public function findInsLteDate(\DateTime $dateTime): ?ClientInsurance
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $qb = $this->createQueryBuilder('ci');
+
+        $qb
+            ->andWhere($qb->expr()->lte('ci.renewalDate', ':date'))
+            ->setParameter(':date', $dateTime->format('Y-m-d'));
+
+        return $qb->getQuery()->getResult();
     }
-    */
 }

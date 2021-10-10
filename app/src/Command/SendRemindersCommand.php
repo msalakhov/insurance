@@ -6,6 +6,7 @@ namespace App\Command;
 
 use App\Entity\Client;
 use App\Entity\ClientInsurance;
+use App\Repository\ClientInsuranceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -52,8 +53,10 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
         $renewalDate->setTime(0,0);
         $this->logger->info('Renewal date ' . $renewalDate->format('m/d/Y H:i:s'));
 
+        /** @var ClientInsuranceRepository $repo */
+        $repo = $this->entityManager->getRepository(ClientInsurance::class);
         /** @var ClientInsurance[] $ins */
-        $ins = $this->entityManager->getRepository(ClientInsurance::class)->findBy(['renewalDate' => ['$lte' => $renewalDate]]);
+        $ins = $repo->findInsLteDate($renewalDate);
         foreach ($ins as $item) {
             if (!(bool)$item->getIsNotifyed()) {
                 $isNotyfied = false;
