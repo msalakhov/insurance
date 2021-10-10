@@ -17,6 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 
 class SendRemindersCommand extends Command implements ContainerAwareInterface, LoggerAwareInterface
@@ -67,7 +68,7 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
                 $email = $client->getEmail();
                 $output->writeln('start');
                 $email = (new Email())
-                    ->from('vismark47@gmail.com')
+                    ->from(new Address('no-reply@insurance.com', 'Insurance Mail Bot'))
                     ->to($email)
                     ->subject('Renewal date is coming')
                     ->text(sprintf(
