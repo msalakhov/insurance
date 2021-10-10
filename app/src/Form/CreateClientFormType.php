@@ -23,7 +23,9 @@ class CreateClientFormType extends AbstractType
         $builder
             ->add('name')
             ->add('city')
-            ->add('email', EmailType::class)
+            ->add('email', EmailType::class, [
+                'required' => true,
+            ])
             ->add('photo', FileType::class, [
                 'mapped' => false,
                 'required' => false,

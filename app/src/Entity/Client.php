@@ -33,7 +33,7 @@ class Client
     private $photo;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="string", nullable=false)
      */
     private $email;
 
