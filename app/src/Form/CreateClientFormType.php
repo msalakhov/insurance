@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Date;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\File;
 
 use function PHPSTORM_META\type;
@@ -25,6 +26,9 @@ class CreateClientFormType extends AbstractType
             ->add('city')
             ->add('email', EmailType::class, [
                 'required' => true,
+                'constraints' => [
+                    new Email(['message' => 'Please enter correct email']),
+                ]
             ])
             ->add('photo', FileType::class, [
                 'mapped' => false,
