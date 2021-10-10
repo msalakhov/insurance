@@ -37,7 +37,7 @@ class ClientInsuranceRepository extends ServiceEntityRepository
     */
 
 
-    public function findInsLteDate(\DateTime $dateTime): ?ClientInsurance
+    public function findInsLteDate(\DateTime $dateTime): array
     {
         $qb = $this->createQueryBuilder('ci');
 
