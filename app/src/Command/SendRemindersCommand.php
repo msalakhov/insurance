@@ -53,7 +53,7 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
         $this->logger->info('Renewal date ' . $renewalDate->format('m/d/Y H:i:s'));
 
         /** @var ClientInsurance[] $ins */
-        $ins = $this->entityManager->getRepository(ClientInsurance::class)->findBy(['renewalDate' => $renewalDate]);
+        $ins = $this->entityManager->getRepository(ClientInsurance::class)->findBy(['renewalDate' => ['$lte' => $renewalDate]]);
         foreach ($ins as $item) {
             if (!(bool)$item->getIsNotifyed()) {
                 $isNotyfied = false;
