@@ -27,7 +27,7 @@ class CreateClientFormType extends AbstractType
             ->add('email', EmailType::class, [
                 'required' => true,
                 'constraints' => [
-                    new Email(['message' => 'Please enter correct email']),
+                    new Email(),
                 ]
             ])
             ->add('photo', FileType::class, [
