@@ -69,9 +69,11 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
                 /** @var Client $client */
                 $client = $this->entityManager->getRepository(Client::class)->find($item->getClientId());
 
+                $user = $client->getUser();
+                $email = $user ? $user->getEmail() : '';
                 $email = (new Email())
                     ->from(new Address('no-reply@insurance.com', 'Insurance Mail Bot'))
-                    ->to($client->getEmail() ?? '')
+                    ->to($email)
                     ->subject('Renewal date is coming')
                     ->text(sprintf(
                         "Hello dear client!\nYour insurance %s is expiring\nPlease contact me\nRenewal Date: %s",

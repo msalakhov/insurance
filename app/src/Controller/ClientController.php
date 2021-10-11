@@ -70,7 +70,7 @@ class ClientController extends AbstractController
 
                 $client->setPhoto($fileName);
             }
-            $client->setUserId($user);
+            $client->setUser($user);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($client);

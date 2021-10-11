@@ -158,7 +158,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->clients->contains($client)) {
             $this->clients[] = $client;
-            $client->setUserId($this);
+            $client->setUser($this);
         }
 
         return $this;
@@ -168,8 +168,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->clients->removeElement($client)) {
             // set the owning side to null (unless already changed)
-            if ($client->getUserId() === $this) {
-                $client->setUserId(null);
+            if ($client->getUser() === $this) {
+                $client->setUser(null);
             }
         }
 
