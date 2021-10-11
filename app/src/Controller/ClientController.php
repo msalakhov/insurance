@@ -35,7 +35,7 @@ class ClientController extends AbstractController
         if (in_array('ADMIN', $user->getRoles())) {
             $clients = $clientRepository->findAll();
         } else {
-            $clients = $clientRepository->findBy(['userId' => $user->getId()]);
+            $clients = $clientRepository->findBy(['user' => $user->getId()]);
         }
 
         return $this->render('client/index.html.twig', [

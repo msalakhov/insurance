@@ -43,7 +43,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $password;
 
     /**
-     * @ORM\OneToMany(targetEntity=Client::class, mappedBy="userId", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Client::class, mappedBy="user", orphanRemoval=true)
      */
     private $clients;
 
