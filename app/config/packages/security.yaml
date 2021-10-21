@@ -2,8 +2,7 @@ security:
     # https://symfony.com/doc/current/security/experimental_authenticators.html
     enable_authenticator_manager: true
     password_hashers:
-        App\Entity\User:
-            algorithm: auto
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
@@ -17,6 +16,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         user_secured_area:
+            lazy: true
             pattern:   ^/
             provider: app_user_provider
             form_login:
@@ -25,10 +25,13 @@ security:
                 default_target_path: /
                 username_parameter: email
                 password_parameter: password
+                enable_csrf: true
             logout:
                 path: app_logout
                 # where to redirect after logout
                 target: /login
+            login_throttling:
+                max_attempts: 3
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
