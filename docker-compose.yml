@@ -21,6 +21,7 @@ services:
     ports:
       - '9000:9000'
     volumes:
+      - ./containers/php/conf:/usr/local/etc/php
       - ./app:/var/www/lux:rw
     depends_on:
       - database
