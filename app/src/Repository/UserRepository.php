@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -34,6 +35,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newHashedPassword);
         $this->_em->persist($user);
         $this->_em->flush();
+    }
+
+    public function setNewPassword(PasswordAuthenticatedUserInterface $user, string $plainPassword): void
+    {
+        $factory = new PasswordHasherFactory([
+            'common' => ['algorithm' => 'bcrypt'],
+            'memory-hard' => ['algorithm' => 'sodium'],
+        ]);
+
+        $hasher = $factory->getPasswordHasher('common');
+        $newHashedPassword = $hasher->hash($plainPassword);
+        
+        $this->upgradePassword($user, $newHashedPassword);
     }
 
     // /**

@@ -43,6 +43,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $password;
 
     /**
+     * @var string The plain password
+     */
+    private $plainPassword;
+
+    /**
      * @ORM\OneToMany(targetEntity=Client::class, mappedBy="user", orphanRemoval=true)
      */
     private $clients;
@@ -122,6 +127,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(string $plainPassword): self {
+        $this->plainPassword = $plainPassword;
 
         return $this;
     }
