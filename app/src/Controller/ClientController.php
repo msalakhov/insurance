@@ -31,7 +31,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ClientController extends AbstractController
 {
-    #[Route('/', name: 'client')]
+    #[Route('/', name: 'homepage')]
     public function index(UserInterface $user, ClientRepository $clientRepository)
     {
         if (in_array('ADMIN', $user->getRoles())) {
@@ -87,6 +87,7 @@ class ClientController extends AbstractController
         return $this->render('client/create.html.twig', [
             'controller_name' => 'ClientController',
             'clientForm' => $form->createView(),
+            'title' => 'Create new client'
         ]);
     }
 
@@ -161,6 +162,7 @@ class ClientController extends AbstractController
         return $this->render('client/edit.html.twig', [
             'controller_name' => 'ClientController',
             'clientForm' => $form->createView(),
+            'title' => 'Client editing'
         ]);
     }
 
@@ -227,7 +229,8 @@ class ClientController extends AbstractController
         }
 
         return $this->render('client/add-insurance.html.twig', [
-            'clientId' => $id
+            'clientId' => $id,
+            'title' => "Add client's insurance"
         ]);
     }
 
@@ -259,7 +262,8 @@ class ClientController extends AbstractController
         return $this->render('client/add-insurance-item.html.twig', [
             'controller_name' => 'ClientController',
             'addInsuranceForm' => $form->createView(),
-            'clientId' => $id
+            'clientId' => $id,
+            'title' => "Add client's insurance | Home"
         ]);
     }
 
@@ -291,7 +295,8 @@ class ClientController extends AbstractController
         return $this->render('client/add-insurance-item.html.twig', [
             'controller_name' => 'ClientController',
             'addInsuranceForm' => $form->createView(),
-            'clientId' => $id
+            'clientId' => $id,
+            'title' => "Add client's insurance | Auto"
         ]);
     }
 
@@ -323,7 +328,8 @@ class ClientController extends AbstractController
         return $this->render('client/add-insurance-item.html.twig', [
             'controller_name' => 'ClientController',
             'addInsuranceForm' => $form->createView(),
-            'clientId' => $id
+            'clientId' => $id,
+            'title' => "Add client's insurance | Collectibles"
         ]);
     }
 
@@ -355,7 +361,8 @@ class ClientController extends AbstractController
         return $this->render('client/add-insurance-item.html.twig', [
             'controller_name' => 'ClientController',
             'addInsuranceForm' => $form->createView(),
-            'clientId' => $id
+            'clientId' => $id,
+            'title' => "Add client's insurance | Umbrella"
         ]);
     }
 
@@ -387,7 +394,8 @@ class ClientController extends AbstractController
         return $this->render('client/add-insurance-item.html.twig', [
             'controller_name' => 'ClientController',
             'addInsuranceForm' => $form->createView(),
-            'clientId' => $id
+            'clientId' => $id,
+            'title' => "Add client's insurance | Other"
         ]);
     }
 
@@ -505,6 +513,7 @@ class ClientController extends AbstractController
         return $this->render('client/insurance-upload-file.html.twig', [
             'controller_name' => 'ClientController',
             'attachmentForm' => $form->createView(),
+            'title' => 'Attach insurance file'
         ]);
     }
 
@@ -593,6 +602,7 @@ class ClientController extends AbstractController
         return $this->render('client/upload-file.html.twig', [
             'controller_name' => 'ClientController',
             'attachmentForm' => $form->createView(),
+            'title' => "Upload client's files"
         ]);
     }
 }
