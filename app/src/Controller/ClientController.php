@@ -501,7 +501,7 @@ class ClientController extends AbstractController
                 $attachment->setPath($encodedFileName);
                 $attachment->setInsuranceId($insId);
                 $attachment->setName($fileName);
-            }
+            }   
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($attachment);
