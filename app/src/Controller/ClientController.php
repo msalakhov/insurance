@@ -18,6 +18,7 @@ use App\InsuranceTypes;
 use App\Repository\ClientRepository;
 use App\Form\CreateClientFormType;
 use App\Form\CreateClientInsuranceFormType;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,22 +27,26 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ClientController extends AbstractController
 {
-    #[Route('/', name: 'client')]
+    #[Route('/', name: 'homepage')]
     public function index(UserInterface $user, ClientRepository $clientRepository)
     {
         if (in_array('ADMIN', $user->getRoles())) {
             $clients = $clientRepository->findAll();
+            return $this->render('admin/index.html.twig', [
+                'title' => 'Admin section',
+                'clients' => $clients,
+            ]);
         } else {
             $clients = $clientRepository->findBy(['user' => $user->getId()]);
+            return $this->render('client/index.html.twig', [
+                'title' => 'Your clients',
+                'clients' => $clients,
+            ]);
         }
-
-        return $this->render('client/index.html.twig', [
-            'title' => 'Your clients',
-            'clients' => $clients,
-        ]);
     }
 
     #[Route('/client/create')]
@@ -82,15 +87,22 @@ class ClientController extends AbstractController
         return $this->render('client/create.html.twig', [
             'controller_name' => 'ClientController',
             'clientForm' => $form->createView(),
+            'title' => 'Create new client'
         ]);
     }
 
     #[Route('/client/delete/{id}', methods:['DELETE'])]
-    public function delete($id)
+    public function delete($id, UserInterface $user)
     {
         $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
-        $entityManager = $this->getDoctrine()->getManager();
 
+        if ($client->getUser()->getId() != $user->getId()) {
+            if (!in_array('ADMIN', $user->getRoles())) {
+                throw new AccessDeniedException();
+            }
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($client);
         $entityManager->flush();
 
@@ -99,9 +111,16 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/edit/{id}')]
-    public function edit(Request $request, $id): Response
+    public function edit(Request $request, $id, UserInterface $user): Response
     {
         $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
+
+        if ($client->getUser()->getId() != $user->getId()) {
+            if (!in_array('ADMIN', $user->getRoles())) {
+                throw new AccessDeniedException();
+            }
+        }
+
         if ($client->getPhoto()) {
             $photo = new File($this->getParameter('photoDir') . '/' . $client->getPhoto());
             $fileName = $photo->getFilename();
@@ -143,13 +162,20 @@ class ClientController extends AbstractController
         return $this->render('client/edit.html.twig', [
             'controller_name' => 'ClientController',
             'clientForm' => $form->createView(),
+            'title' => 'Client editing'
         ]);
     }
 
     #[Route('/client/{id}', name: 'insuranceList')]
-    public function insuranceObjects(ClientRepository $clientRepository, $id)
+    public function insuranceObjects(ClientRepository $clientRepository, $id, UserInterface $user)
     {
         $client = $clientRepository->find($id);
+
+        if ($client->getUser()->getId() != $user->getId()) {
+            if (!in_array('ADMIN', $user->getRoles())) {
+                throw new AccessDeniedException();
+            }
+        }
 
         $insuranceList = $this->getDoctrine()->getRepository(ClientInsurance::class)->findBy(['clientId' => $id], ['year' => 'desc']);
         $resInsuranceList = $insuranseObjects = null;
@@ -193,16 +219,31 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/{id}/add-insurance', name: 'add-insurance')]
-    public function addInsurance($id)
+    public function addInsurance($id, ClientRepository $clientRepository, UserInterface $user)
     {
+        $client = $clientRepository->find($id);
+        if ($client->getUser()->getId() != $user->getId()) {
+            if (!in_array('ADMIN', $user->getRoles())) {
+                throw new AccessDeniedException();
+            }
+        }
+
         return $this->render('client/add-insurance.html.twig', [
-            'clientId' => $id
+            'clientId' => $id,
+            'title' => "Add client's insurance"
         ]);
     }
 
     #[Route('/client/{id}/add-insurance-home', name: 'add-insurance-home')]
-    public function addInsuranceHome(Request $request, $id)
+    public function addInsuranceHome(Request $request, $id, ClientRepository $clientRepository, UserInterface $user)
     {
+        $client = $clientRepository->find($id);
+        if ($client->getUser()->getId() != $user->getId()) {
+            if (!in_array('ADMIN', $user->getRoles())) {
+                throw new AccessDeniedException();
+            }
+        }
+
         $clientInsurance = new ClientInsurance();
         $clientInsurance->setClientId($id);
 
@@ -221,13 +262,21 @@ class ClientController extends AbstractController
         return $this->render('client/add-insurance-item.html.twig', [
             'controller_name' => 'ClientController',
             'addInsuranceForm' => $form->createView(),
-            'clientId' => $id
+            'clientId' => $id,
+            'title' => "Add client's insurance | Home"
         ]);
     }
 
     #[Route('/client/{id}/add-insurance-auto', name: 'add-insurance-auto')]
-    public function addInsuranceAuto(Request $request, $id)
+    public function addInsuranceAuto(Request $request, $id, ClientRepository $clientRepository, UserInterface $user)
     {
+        $client = $clientRepository->find($id);
+        if ($client->getUser()->getId() != $user->getId()) {
+            if (!in_array('ADMIN', $user->getRoles())) {
+                throw new AccessDeniedException();
+            }
+        }
+
         $clientInsurance = new ClientInsurance();
         $clientInsurance->setClientId($id);
 
@@ -246,13 +295,21 @@ class ClientController extends AbstractController
         return $this->render('client/add-insurance-item.html.twig', [
             'controller_name' => 'ClientController',
             'addInsuranceForm' => $form->createView(),
-            'clientId' => $id
+            'clientId' => $id,
+            'title' => "Add client's insurance | Auto"
         ]);
     }
 
     #[Route('/client/{id}/add-insurance-coll', name: 'add-insurance-coll')]
-    public function addInsuranceColl(Request $request, $id)
+    public function addInsuranceColl(Request $request, $id, ClientRepository $clientRepository, UserInterface $user)
     {
+        $client = $clientRepository->find($id);
+        if ($client->getUser()->getId() != $user->getId()) {
+            if (!in_array('ADMIN', $user->getRoles())) {
+                throw new AccessDeniedException();
+            }
+        }
+
         $clientInsurance = new ClientInsurance();
         $clientInsurance->setClientId($id);
 
@@ -271,13 +328,21 @@ class ClientController extends AbstractController
         return $this->render('client/add-insurance-item.html.twig', [
             'controller_name' => 'ClientController',
             'addInsuranceForm' => $form->createView(),
-            'clientId' => $id
+            'clientId' => $id,
+            'title' => "Add client's insurance | Collectibles"
         ]);
     }
 
     #[Route('/client/{id}/add-insurance-umbrella', name: 'add-insurance-umbrella')]
-    public function addInsuranceUmbrella(Request $request, $id)
+    public function addInsuranceUmbrella(Request $request, $id, ClientRepository $clientRepository, UserInterface $user)
     {
+        $client = $clientRepository->find($id);
+        if ($client->getUser()->getId() != $user->getId()) {
+            if (!in_array('ADMIN', $user->getRoles())) {
+                throw new AccessDeniedException();
+            }
+        }
+
         $clientInsurance = new ClientInsurance();
         $clientInsurance->setClientId($id);
 
@@ -296,13 +361,21 @@ class ClientController extends AbstractController
         return $this->render('client/add-insurance-item.html.twig', [
             'controller_name' => 'ClientController',
             'addInsuranceForm' => $form->createView(),
-            'clientId' => $id
+            'clientId' => $id,
+            'title' => "Add client's insurance | Umbrella"
         ]);
     }
 
     #[Route('/client/{id}/add-insurance-other', name: 'add-insurance-other')]
-    public function addInsuranceOther(Request $request, $id)
+    public function addInsuranceOther(Request $request, $id, ClientRepository $clientRepository, UserInterface $user)
     {
+        $client = $clientRepository->find($id);
+        if ($client->getUser()->getId() != $user->getId()) {
+            if (!in_array('ADMIN', $user->getRoles())) {
+                throw new AccessDeniedException();
+            }
+        }
+
         $clientInsurance = new ClientInsurance();
         $clientInsurance->setClientId($id);
 
@@ -321,14 +394,23 @@ class ClientController extends AbstractController
         return $this->render('client/add-insurance-item.html.twig', [
             'controller_name' => 'ClientController',
             'addInsuranceForm' => $form->createView(),
-            'clientId' => $id
+            'clientId' => $id,
+            'title' => "Add client's insurance | Other"
         ]);
     }
 
     #[Route('/client/insurance/delete/{id}', name: 'delete-ins', methods:['DELETE'])]
-    public function deleteInsurance($id)
+    public function deleteInsurance($id, ClientRepository $clientRepository, UserInterface $user)
     {
         $clientInsurance = $this->getDoctrine()->getRepository(ClientInsurance::class)->find($id);
+
+        $client = $clientRepository->find($clientInsurance->getClientId());
+        if ($client->getUser()->getId() != $user->getId()) {
+            if (!in_array('ADMIN', $user->getRoles())) {
+                throw new AccessDeniedException();
+            }
+        }
+
         $entityManager = $this->getDoctrine()->getManager();
 
         $entityManager->remove($clientInsurance);
@@ -339,9 +421,17 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/insurance/edit/{id}', name: 'edit-ins')]
-    public function editInsurance(UserInterface $user, Request $request, $id): Response
+    public function editInsurance(UserInterface $user, Request $request, $id, ClientRepository $clientRepository): Response
     {
         $insuranse = $this->getDoctrine()->getRepository(ClientInsurance::class)->find($id);
+
+        $client = $clientRepository->find($insuranse->getClientId());
+        if ($client->getUser()->getId() != $user->getId()) {
+            if (!in_array('ADMIN', $user->getRoles())) {
+                throw new AccessDeniedException();
+            }
+        }
+
         $type = $insuranse->getInsuranceObjectsTypesId();
         $typeName = InsuranceTypes::NAMES[$type];
 
@@ -369,19 +459,26 @@ class ClientController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
 
-            return $this->redirectToRoute('insuranceList', ['id' => $user->getId()]);
+            return $this->redirectToRoute('insuranceList', ['id' => $insuranse->getClientId()]);
         }
 
         return $this->render('client/editInsurance.html.twig', [
             'controller_name' => 'ClientController',
             'addInsuranceForm' => $form->createView(),
-            'clientId' => $user->getId()
+            'clientId' => $insuranse->getClientId()
         ]);
     }
 
     #[Route('/client/{id}/insurance/{insId}/upload-file', name: 'insurance-upload-file')]
-    public function uploadIns(Request $request, $id, $insId): Response
+    public function uploadIns(Request $request, $id, $insId, ClientRepository $clientRepository, UserInterface $user): Response
     {
+        $client = $clientRepository->find($id);
+        if ($client->getUser()->getId() != $user->getId()) {
+            if (!in_array('ADMIN', $user->getRoles())) {
+                throw new AccessDeniedException();
+            }
+        }
+
         $attachment = new InsuranceAttachments();
         $form = $this->createForm(InsuranceAttachmentsFormType::class, $attachment);
         $form->handleRequest($request);
@@ -404,7 +501,7 @@ class ClientController extends AbstractController
                 $attachment->setPath($encodedFileName);
                 $attachment->setInsuranceId($insId);
                 $attachment->setName($fileName);
-            }
+            }   
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($attachment);
@@ -416,15 +513,24 @@ class ClientController extends AbstractController
         return $this->render('client/insurance-upload-file.html.twig', [
             'controller_name' => 'ClientController',
             'attachmentForm' => $form->createView(),
+            'title' => 'Attach insurance file'
         ]);
     }
 
     #[Route('/client/insurance/delete-attachment/{attachmentId}', name: 'delete-ins-attachment', methods:['DELETE'])]
-    public function deleteInsAttachment($attachmentId)
+    public function deleteInsAttachment($attachmentId, ClientRepository $clientRepository, UserInterface $user)
     {
         $attachment = $this->getDoctrine()->getRepository(InsuranceAttachments::class)->find($attachmentId);
-        $entityManager = $this->getDoctrine()->getManager();
+        $insurance = $this->getDoctrine()->getRepository(ClientInsurance::class)->find($attachment->getInsuranceId());
 
+        $client = $clientRepository->find($insurance->getClientId());
+        if ($client->getUser()->getId() != $user->getId()) {
+            if (!in_array('ADMIN', $user->getRoles())) {
+                throw new AccessDeniedException();
+            }
+        }
+        
+        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($attachment);
         $entityManager->flush();
 
@@ -433,11 +539,18 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/delete-attachment/{id}', name: 'delete-attachment', methods:['DELETE'])]
-    public function deleteAttachment($id)
+    public function deleteAttachment($id, ClientRepository $clientRepository, UserInterface $user)
     {
         $attachment = $this->getDoctrine()->getRepository(Attachments::class)->find($id);
-        $entityManager = $this->getDoctrine()->getManager();
 
+        $client = $clientRepository->find($attachment->getUserId());
+        if ($client->getUser()->getId() != $user->getId()) {
+            if (!in_array('ADMIN', $user->getRoles())) {
+                throw new AccessDeniedException();
+            }
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($attachment);
         $entityManager->flush();
 
@@ -446,8 +559,15 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/{id}/upload-file', name: 'upload-file')]
-    public function upload(Request $request, $id): Response
+    public function upload(Request $request, $id, ClientRepository $clientRepository, UserInterface $user): Response
     {
+        $client = $clientRepository->find($id);
+        if ($client->getUser()->getId() != $user->getId()) {
+            if (!in_array('ADMIN', $user->getRoles())) {
+                throw new AccessDeniedException();
+            }
+        }
+
         $attachment = new Attachments();
         $form = $this->createForm(AttachmentsFormType::class, $attachment);
         $form->handleRequest($request);
@@ -482,6 +602,7 @@ class ClientController extends AbstractController
         return $this->render('client/upload-file.html.twig', [
             'controller_name' => 'ClientController',
             'attachmentForm' => $form->createView(),
+            'title' => "Upload client's files"
         ]);
     }
 }
