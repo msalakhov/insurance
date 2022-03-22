@@ -36,3 +36,7 @@ services:
     depends_on:
       - php
       - database
+  redis:
+    container_name: redis
+    image: redis:5-alpine
+    ports: [6379]

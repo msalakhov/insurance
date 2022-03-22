@@ -1,6 +1,7 @@
 FROM php:8.0-fpm
 
-RUN apt update \
+RUN echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' | tee /etc/apt/sources.list.d/symfony-cli.list \
+    && apt update \
     && apt install -y \
 	zlib1g-dev \
 	g++ \
@@ -10,7 +11,8 @@ RUN apt update \
 	libzip-dev \
 	libpng-dev \
 	libjpeg62-turbo-dev \
-	libfreetype6-dev\
+	libfreetype6-dev \
+    symfony-cli \
     && docker-php-ext-install intl opcache pdo pdo_mysql \
     && pecl install apcu \
     && docker-php-ext-enable apcu \
@@ -18,7 +20,8 @@ RUN apt update \
     && docker-php-ext-install zip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd \
-    && docker-php-ext-install intl
+    && docker-php-ext-install intl \
+    && pecl install redis
 
 WORKDIR /var/www/lux
 
