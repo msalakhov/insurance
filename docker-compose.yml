@@ -40,3 +40,7 @@ services:
     container_name: redis
     image: redis:5-alpine
     ports: [6379]
+  mailcatcher:
+    container_name: mailcatcher
+    image: schickling/mailcatcher
+    ports: [1025, 1080]
