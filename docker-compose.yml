@@ -14,6 +14,9 @@ services:
       - '4306:3306'
     volumes:
       - ./db:/var/lib/mysql
+    networks:
+      default:
+        ipv4_address: 172.18.0.2
   php:
     container_name: php
     build:
@@ -25,6 +28,9 @@ services:
       - ./app:/var/www/lux:rw
     depends_on:
       - database
+    networks:
+      default:
+        ipv4_address: 172.18.0.3
   nginx:
     container_name: nginx
     image: nginx:stable-alpine
@@ -36,11 +42,26 @@ services:
     depends_on:
       - php
       - database
+    networks:
+      default:
+        ipv4_address: 172.18.0.4
   redis:
     container_name: redis
     image: redis:5-alpine
     ports: [6379]
+    networks:
+      default:
+        ipv4_address: 172.18.0.5
   mailcatcher:
     container_name: mailcatcher
     image: schickling/mailcatcher
     ports: [1025, 1080]
+    networks:
+      default:
+        ipv4_address: 172.18.0.6
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
