@@ -32,7 +32,7 @@
 						</div>
 					</div>
 				{% endif %}
-				{% if app.request.attributes.get('_route') != "homepage" and app.request.attributes.get('_route') != "app_login" and app.request.attributes.get('_route') != "app_forgot_password_request" and app.request.attributes.get('_route') != "app_register" %}
+				{% if app.request.attributes.get('_route') != "homepage" and app.request.attributes.get('_route') != "app_login" and app.request.attributes.get('_route') != "app_forgot_password_request" and app.request.attributes.get('_route') != "app_register" and app.request.attributes.get('_route') != "app_check_email" %}
 					<ul class="nav nav-tabs mt-5">
 						{% block breadcrumb %}
 							<li class="nav-item">
