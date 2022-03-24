@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ClientRepository", repositoryClass=ClientRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Client
 {
@@ -50,6 +51,11 @@ class Client
      * @ORM\Column(type="date", nullable=true)
      */
     private $renewal_term;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private $createdAt;
 
     // public function __construct($name, $city, $photo)
     // {
@@ -131,5 +137,18 @@ class Client
         $this->user = $user;
 
         return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setCreatedAtValue(): void
+    {
+        $this->createdAt = new \DateTimeImmutable();
     }
 }
