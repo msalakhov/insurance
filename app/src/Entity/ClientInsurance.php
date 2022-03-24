@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=ClientInsuranceRepository::class)
+ * @ORM\HasLyfecycleCallbaks()
  */
 class ClientInsurance
 {
@@ -201,6 +202,11 @@ class ClientInsurance
      * @var bool
      */
     private $isNotifyed;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private $createdAt;
 
     /**
      * @return mixed
@@ -760,5 +766,18 @@ class ClientInsurance
         $this->isNotifyed = $isNotifyed;
 
         return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    /** 
+     * @ORM\PrePersist
+    */
+    public function setCreatedAtValue(): void
+    {
+        $this->createdAt = new \DateTimeImmutable();
     }
 }
