@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=ClientInsuranceRepository::class)
- * @ORM\HasLyfecycleCallbaks()
+ * @ORM\HasLifecycleCallbacks()
  */
 class ClientInsurance
 {

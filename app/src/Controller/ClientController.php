@@ -81,7 +81,7 @@ class ClientController extends AbstractController
             $entityManager->persist($client);
             $entityManager->flush();
 
-            return $this->redirectToRoute('client');
+            return $this->redirectToRoute('homepage');
         }
 
         return $this->render('client/create.html.twig', [
@@ -156,7 +156,7 @@ class ClientController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
 
-            return $this->redirectToRoute('client');
+            return $this->redirectToRoute('homepage');
         }
 
         return $this->render('client/edit.html.twig', [
