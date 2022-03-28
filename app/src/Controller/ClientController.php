@@ -63,7 +63,7 @@ class ClientController extends AbstractController
 
                 try {
                     $photo->move(
-                        $this->getParameter('photoDir'), 
+                        $this->getParameter('photoDirAbs'), 
                         $fileName
                     );
                 } catch (FileException $e) {
@@ -71,7 +71,7 @@ class ClientController extends AbstractController
                 }
 
                 $imageOptimazer = new ImageOptimizer();
-                $imageOptimazer->resize($this->getParameter('photoDir') . '/' . $fileName);
+                $imageOptimazer->resize($this->getParameter('photoDirAbs') . '/' . $fileName);
 
                 $client->setPhoto($fileName);
             }
@@ -122,7 +122,7 @@ class ClientController extends AbstractController
         }
 
         if ($client->getPhoto()) {
-            $photo = new File($this->getParameter('photoDir') . '/' . $client->getPhoto());
+            $photo = new File($this->getParameter('photoDirAbs') . '/' . $client->getPhoto());
             $fileName = $photo->getFilename();
 
             $client->setPhoto($photo);
@@ -138,7 +138,7 @@ class ClientController extends AbstractController
 
                 try {
                     $photo->move(
-                        $this->getParameter('photoDir'), 
+                        $this->getParameter('photoDirAbs'), 
                         $fileName
                     );
                 } catch (FileException $e) {
@@ -146,7 +146,7 @@ class ClientController extends AbstractController
                 }
 
                 $imageOptimazer = new ImageOptimizer();
-                $imageOptimazer->resize($this->getParameter('photoDir') . '/' . $fileName);
+                $imageOptimazer->resize($this->getParameter('photoDirAbs') . '/' . $fileName);
 
                 
             }
@@ -491,7 +491,7 @@ class ClientController extends AbstractController
 
                 try {
                     $file->move(
-                        $this->getParameter('photoDir'),
+                        $this->getParameter('photoDirAbs'),
                         $encodedFileName
                     );
                 } catch (FileException $e) {
@@ -580,7 +580,7 @@ class ClientController extends AbstractController
 
                 try {
                     $file->move(
-                        $this->getParameter('photoDir'),
+                        $this->getParameter('photoDirAbs'),
                         $encodedFileName
                     );
                 } catch (FileException $e) {

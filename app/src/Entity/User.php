@@ -222,4 +222,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->createdAt = new \DateTimeImmutable();
     }
+
+    public function __toString(): string
+    {
+        return "#{$this->id} ({$this->email})";
+    }
 }
