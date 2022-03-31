@@ -1,7 +1,6 @@
 .idea
 app/var/*
 app/vendor/*
-!db
 db/*
-!app/public
 app/public/*
+db_test

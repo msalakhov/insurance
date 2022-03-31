@@ -17,6 +17,23 @@ services:
     networks:
       default:
         ipv4_address: 172.18.0.2
+  database_test:
+    container_name: database_test
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_PORT=3306
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=lux_test
+      - MYSQL_USER=lux_admin
+      - MYSQL_PASSWORD=&pHDG3%LcV
+    ports:
+      - '5306:3306'
+    volumes:
+      - ./db_test:/var/lib/mysql
+    networks:
+      default:
+        ipv4_address: 172.18.0.7
   php:
     container_name: php
     build:

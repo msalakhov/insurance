@@ -4,39 +4,30 @@ namespace App\DataFixtures;
 
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixtures extends Fixture
 {
-    private $encoder;
-    private $em;
+    public const USER_REFERENCE = 'user';
+    private UserPasswordHasherInterface $hasher;
 
-    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $entityManager)
+    public function __construct(UserPasswordHasherInterface $hasher, EntityManagerInterface $entityManager)
     {
-        $this->encoder = $encoder;
-        $this->em = $entityManager;
+        $this->hasher = $hasher;
     }
 
-    public function load(\Doctrine\Persistence\ObjectManager $manager)
+    public function load(ObjectManager $manager)
     {
-        $usersData = [
-            0 => [
-                'email' => 'user@example.com',
-                'role' => ['ROLE_USER'],
-                'password' => 123456
-            ]
-        ];
+        $user = new User();
+        $user->setEmail('aaa@aaa.com');
+        $user->setPassword($this->hasher->hashPassword($user, 'qwerty123456'));
+        $user->setRoles(['ROLE_USER']);
+        
+        $manager->persist($user);
+        $manager->flush();
 
-        foreach ($usersData as $user) {
-            $newUser = new User();
-            $newUser->setEmail($user['email']);
-            $newUser->setPassword($this->encoder->encodePassword($newUser, $user['password']));
-            $newUser->setRoles($user['role']);
-            $this->em->persist($newUser);
-        }
-
-        $this->em->flush();
+        $this->addReference(self::USER_REFERENCE, $user);
     }
 }

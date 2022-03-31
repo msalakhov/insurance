@@ -2,14 +2,18 @@
 
 namespace App\DataFixtures;
 
+use App\ImageOptimizer;
 use App\Entity\Client;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use Faker\Generator;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
-class ClientFixture extends Fixture
+class ClientFixture extends Fixture implements DependentFixtureInterface
 {
-    private $faker;
+    private Generator $faker;
 
     public function __construct()
     {
@@ -19,19 +23,23 @@ class ClientFixture extends Fixture
     public function load(ObjectManager $manager)
     {
         for ($i = 0; $i < 4; $i++) {
-            $manager->persist($this->getClient());
+            $client = new Client();
+            $client->setName($this->faker->name);
+            $client->setCity($this->faker->city);
+            $client->setPhoto($this->faker->image);
+            $client->setEmail($this->faker->email);
+            $client->setUser($this->getReference(UserFixtures::USER_REFERENCE));
 
+            $manager->persist($client);
         }
 
         $manager->flush();
     }
 
-    private function getClient()
+    public function getDependencies()
     {
-        return new Client(
-            $this->faker->name(),
-            $this->faker->city(),
-            $this->faker->image()
-        );
+        return [
+            UserFixtures::class,
+        ];
     }
 }
