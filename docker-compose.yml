@@ -41,7 +41,9 @@ services:
     ports:
       - '9000:9000'
     volumes:
-      - ./containers/php/conf:/usr/local/etc/php
+      - ./containers/php/conf/php.ini:/usr/local/etc/php/php.ini
+      - ./containers/php/conf/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ./containers/php/conf/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
       - ./app:/var/www/lux:rw
     depends_on:
       - database

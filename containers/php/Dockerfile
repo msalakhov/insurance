@@ -15,7 +15,9 @@ RUN echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' | tee /etc/apt/sour
     symfony-cli \
     && docker-php-ext-install intl opcache pdo pdo_mysql \
     && pecl install apcu \
+    && pecl install xdebug \
     && docker-php-ext-enable apcu \
+    && docker-php-ext-enable xdebug \
     && docker-php-ext-configure zip \
     && docker-php-ext-install zip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
