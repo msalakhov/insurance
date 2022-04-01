@@ -4,3 +4,4 @@ app/vendor/*
 db/*
 app/public/*
 db_test
+.vscode
