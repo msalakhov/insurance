@@ -18,40 +18,92 @@ class InsuranceObjectsTypesFields
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=100)
      */
-    private $insuranceObjectTypeId;
+    private $name;
 
     /**
      * @ORM\Column(type="string", length=100)
      */
-    private $fieldName;
+    private $type;
+
+    /**
+     * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    private $label;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $required;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=InsuranceObjectsTypes::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $insuranceType;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getInsuranceObjectTypeId(): ?int
+    public function getName(): ?string
     {
-        return $this->insuranceObjectTypeId;
+        return $this->name;
     }
 
-    public function setInsuranceObjectTypeId(int $insuranceObjectTypeId): self
+    public function setName(string $name): self
     {
-        $this->insuranceObjectTypeId = $insuranceObjectTypeId;
+        $this->name = $name;
 
         return $this;
     }
 
-    public function getFieldName(): ?string
+    public function getType(): ?string
     {
-        return $this->fieldName;
+        return $this->type;
     }
 
-    public function setFieldName(string $fieldName): self
+    public function setType(string $type): self
     {
-        $this->fieldName = $fieldName;
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(?string $label): self
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
+    public function getRequired(): ?bool
+    {
+        return $this->required;
+    }
+
+    public function setRequired(bool $required): self
+    {
+        $this->required = $required;
+
+        return $this;
+    }
+
+    public function getInsuranceType(): ?InsuranceObjectsTypes
+    {
+        return $this->insuranceType;
+    }
+
+    public function setInsuranceType(?InsuranceObjectsTypes $insuranceType): self
+    {
+        $this->insuranceType = $insuranceType;
 
         return $this;
     }

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ClientInsuranceRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ClientInsuranceRepository::class)
@@ -20,6 +21,7 @@ class ClientInsurance
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      */
     private $name;
 
@@ -32,11 +34,6 @@ class ClientInsurance
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $renewalDate;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $insuranceObjectsTypesId;
 
     //HOME
     /**
@@ -168,7 +165,7 @@ class ClientInsurance
     private $motorist;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $year;
 
@@ -207,6 +204,12 @@ class ClientInsurance
      * @ORM\Column(type="datetime_immutable")
      */
     private $createdAt;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=InsuranceObjectsTypes::class, inversedBy="insurance")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $insuranceObjectsTypes;
 
     /**
      * @return mixed
@@ -262,22 +265,6 @@ class ClientInsurance
     public function setRenewalDate($renewalDate): void
     {
         $this->renewalDate = $renewalDate;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getInsuranceObjectsTypesId()
-    {
-        return $this->insuranceObjectsTypesId;
-    }
-
-    /**
-     * @param mixed $insuranceObjectsTypesId
-     */
-    public function setInsuranceObjectsTypesId($insuranceObjectsTypesId): void
-    {
-        $this->insuranceObjectsTypesId = $insuranceObjectsTypesId;
     }
 
     /**
@@ -779,5 +766,17 @@ class ClientInsurance
     public function setCreatedAtValue(): void
     {
         $this->createdAt = new \DateTimeImmutable();
+    }
+
+    public function getInsuranceObjectsTypes(): ?InsuranceObjectsTypes
+    {
+        return $this->insuranceObjectsTypes;
+    }
+
+    public function setInsuranceObjectsTypes(?InsuranceObjectsTypes $insuranceObjectsTypes): self
+    {
+        $this->insuranceObjectsTypes = $insuranceObjectsTypes;
+
+        return $this;
     }
 }

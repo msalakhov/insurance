@@ -19,22 +19,19 @@ class InsuranceObjectsTypesFieldsRepository extends ServiceEntityRepository
         parent::__construct($registry, InsuranceObjectsTypesFields::class);
     }
 
-    // /**
-    //  * @return InsuranceObjectsTypesFields[] Returns an array of InsuranceObjectsTypesFields objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return InsuranceObjectsTypesFields[] Returns an array of InsuranceObjectsTypesFields objects
+     */
+    public function findByInsuranceType($value)
     {
         return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
+            ->andWhere('i.insuranceType = :val')
             ->setParameter('val', $value)
             ->orderBy('i.id', 'ASC')
-            ->setMaxResults(10)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
 
     /*
     public function findOneBySomeField($value): ?InsuranceObjectsTypesFields

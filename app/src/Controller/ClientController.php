@@ -3,22 +3,21 @@
 namespace App\Controller;
 
 use App\Entity\Attachments;
-use App\Form\AutoInsuranceFormType;
-use App\Form\CollectablesInsuranceFormType;
-use App\Form\HomeInsuranceFormType;
-use App\Form\UmbrellaInsuranceFormType;
-use App\Form\OtherInsuranceFormType;
 use App\Form\InsuranceAttachmentsFormType;
 use App\ImageOptimizer;
 use App\Entity\Client;
 use App\Entity\ClientInsurance;
 use App\Form\AttachmentsFormType;
 use App\Entity\InsuranceAttachments;
-use App\InsuranceTypes;
 use App\Repository\ClientRepository;
 use App\Form\CreateClientFormType;
 use App\Form\CreateClientInsuranceFormType;
-use Exception;
+use App\Repository\AttachmentsRepository;
+use App\Repository\ClientInsuranceRepository;
+use App\Repository\InsuranceAttachmentsRepository;
+use App\Repository\UserRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,7 +49,7 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/create')]
-    public function create(UserInterface $user, Request $request): Response
+    public function create(UserInterface $user, Request $request, ManagerRegistry $managerRegistry): Response
     {
         $client = new Client();
         $form = $this->createForm(CreateClientFormType::class, $client);
@@ -77,7 +76,7 @@ class ClientController extends AbstractController
             }
             $client->setUser($user);
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $managerRegistry->getManager();
             $entityManager->persist($client);
             $entityManager->flush();
 
@@ -92,9 +91,9 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/delete/{id}', methods:['DELETE'])]
-    public function delete($id, UserInterface $user)
+    public function delete($id, UserInterface $user, ClientRepository $clientRepository, ManagerRegistry $managerRegistry)
     {
-        $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
+        $client = $clientRepository->find($id);
 
         if ($client->getUser()->getId() != $user->getId()) {
             if (!in_array('ADMIN', $user->getRoles())) {
@@ -102,7 +101,7 @@ class ClientController extends AbstractController
             }
         }
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $managerRegistry->getManager();
         $entityManager->remove($client);
         $entityManager->flush();
 
@@ -111,9 +110,9 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/edit/{id}')]
-    public function edit(Request $request, $id, UserInterface $user): Response
+    public function edit(Request $request, $id, UserInterface $user, ClientRepository $clientRepository, ManagerRegistry $managerRegistry): Response
     {
-        $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
+        $client = $clientRepository->find($id);
 
         if ($client->getUser()->getId() != $user->getId()) {
             if (!in_array('ADMIN', $user->getRoles())) {
@@ -153,7 +152,7 @@ class ClientController extends AbstractController
 
             $client->setPhoto($fileName);
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $managerRegistry->getManager();
             $entityManager->flush();
 
             return $this->redirectToRoute('homepage');
@@ -167,7 +166,7 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/{id}', name: 'insuranceList')]
-    public function insuranceObjects(ClientRepository $clientRepository, $id, UserInterface $user)
+    public function insuranceObjects($id, UserInterface $user, ClientRepository $clientRepository, ClientInsuranceRepository $clientInsuranceRepository, InsuranceAttachmentsRepository $insuranceAttachmentsRepository, AttachmentsRepository $attachmentsRepository)
     {
         $client = $clientRepository->find($id);
 
@@ -177,19 +176,16 @@ class ClientController extends AbstractController
             }
         }
 
-        $insuranceList = $this->getDoctrine()->getRepository(ClientInsurance::class)->findBy(['clientId' => $id], ['year' => 'desc']);
-        $resInsuranceList = $insuranseObjects = null;
+        $insuranceList = $clientInsuranceRepository->findBy(['clientId' => $id], ['year' => 'desc']);
+        $resInsuranceList = null;
 
         if ($insuranceList) {
             /** @var ClientInsurance $insuranse */
             foreach ($insuranceList as $insuranse) {
-                $type = $insuranse->getInsuranceObjectsTypesId();
-                if (isset(InsuranceTypes::NAMES[$type]) === false) {
-                   continue;
-                }
-                $typeName = InsuranceTypes::NAMES[$type];
-                $resInsuranceList[$typeName][$insuranse->getYear()] = $insuranse;
-                $insAttachmentsList = $this->getDoctrine()->getRepository(InsuranceAttachments::class)->findBy(['insuranceId' => $insuranse->getId()]);
+                $type = $insuranse->getName();
+                $insuranceYear = $insuranse->getYear();
+                $resInsuranceList[$type][$insuranceYear->format('Y')] = $insuranse;
+                $insAttachmentsList = $insuranceAttachmentsRepository->findBy(['insuranceId' => $insuranse->getId()]);
                 foreach ($insAttachmentsList as $attachment) {
                     $arResAttachmentList[$insuranse->getId()][] = [
                         'id' => $attachment->getId(),
@@ -200,7 +196,7 @@ class ClientController extends AbstractController
             }
         }
 
-        $attachmentsList = $this->getDoctrine()->getRepository(Attachments::class)->findBy(['userId' => $id]);
+        $attachmentsList = $attachmentsRepository->findBy(['userId' => $id]);
         foreach ($attachmentsList as $attachment) {
             $arResAttachmentList2[] = [
                 'id' => $attachment->getId(),
@@ -219,7 +215,7 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/{id}/add-insurance', name: 'add-insurance')]
-    public function addInsurance($id, ClientRepository $clientRepository, UserInterface $user)
+    public function addInsurance($id, ClientRepository $clientRepository, UserInterface $user, Request $request, ManagerRegistry $managerRegistry)
     {
         $client = $clientRepository->find($id);
         if ($client->getUser()->getId() != $user->getId()) {
@@ -228,181 +224,32 @@ class ClientController extends AbstractController
             }
         }
 
-        return $this->render('client/add-insurance.html.twig', [
+        $clientInsurance = new ClientInsurance();
+        $clientInsurance->setClientId($id);
+
+        $form = $this->createForm(CreateClientInsuranceFormType::class, $clientInsurance);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $managerRegistry->getManager();
+            $entityManager->persist($clientInsurance);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('insuranceList', ['id' => $id]);
+        }
+
+        return $this->render('client/add-insurance-item.html.twig', [
+            'controller_name' => 'ClientController',
+            'addInsuranceForm' => $form->createView(),
             'clientId' => $id,
             'title' => "Add client's insurance"
         ]);
     }
 
-    #[Route('/client/{id}/add-insurance-home', name: 'add-insurance-home')]
-    public function addInsuranceHome(Request $request, $id, ClientRepository $clientRepository, UserInterface $user)
-    {
-        $client = $clientRepository->find($id);
-        if ($client->getUser()->getId() != $user->getId()) {
-            if (!in_array('ADMIN', $user->getRoles())) {
-                throw new AccessDeniedException();
-            }
-        }
-
-        $clientInsurance = new ClientInsurance();
-        $clientInsurance->setClientId($id);
-
-        $form = $this->createForm(HomeInsuranceFormType::class, $clientInsurance);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $clientInsurance->setInsuranceObjectsTypesId(InsuranceTypes::HOME);
-            $entityManager->persist($clientInsurance);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('insuranceList', ['id' => $id]);
-        }
-
-        return $this->render('client/add-insurance-item.html.twig', [
-            'controller_name' => 'ClientController',
-            'addInsuranceForm' => $form->createView(),
-            'clientId' => $id,
-            'title' => "Add client's insurance | Home"
-        ]);
-    }
-
-    #[Route('/client/{id}/add-insurance-auto', name: 'add-insurance-auto')]
-    public function addInsuranceAuto(Request $request, $id, ClientRepository $clientRepository, UserInterface $user)
-    {
-        $client = $clientRepository->find($id);
-        if ($client->getUser()->getId() != $user->getId()) {
-            if (!in_array('ADMIN', $user->getRoles())) {
-                throw new AccessDeniedException();
-            }
-        }
-
-        $clientInsurance = new ClientInsurance();
-        $clientInsurance->setClientId($id);
-
-        $form = $this->createForm(AutoInsuranceFormType::class, $clientInsurance);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $clientInsurance->setInsuranceObjectsTypesId(InsuranceTypes::AUTO);
-            $entityManager->persist($clientInsurance);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('insuranceList', ['id' => $id]);
-        }
-
-        return $this->render('client/add-insurance-item.html.twig', [
-            'controller_name' => 'ClientController',
-            'addInsuranceForm' => $form->createView(),
-            'clientId' => $id,
-            'title' => "Add client's insurance | Auto"
-        ]);
-    }
-
-    #[Route('/client/{id}/add-insurance-coll', name: 'add-insurance-coll')]
-    public function addInsuranceColl(Request $request, $id, ClientRepository $clientRepository, UserInterface $user)
-    {
-        $client = $clientRepository->find($id);
-        if ($client->getUser()->getId() != $user->getId()) {
-            if (!in_array('ADMIN', $user->getRoles())) {
-                throw new AccessDeniedException();
-            }
-        }
-
-        $clientInsurance = new ClientInsurance();
-        $clientInsurance->setClientId($id);
-
-        $form = $this->createForm(CollectablesInsuranceFormType::class, $clientInsurance);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $clientInsurance->setInsuranceObjectsTypesId(InsuranceTypes::COLLECTABLES);
-            $entityManager->persist($clientInsurance);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('insuranceList', ['id' => $id]);
-        }
-
-        return $this->render('client/add-insurance-item.html.twig', [
-            'controller_name' => 'ClientController',
-            'addInsuranceForm' => $form->createView(),
-            'clientId' => $id,
-            'title' => "Add client's insurance | Collectibles"
-        ]);
-    }
-
-    #[Route('/client/{id}/add-insurance-umbrella', name: 'add-insurance-umbrella')]
-    public function addInsuranceUmbrella(Request $request, $id, ClientRepository $clientRepository, UserInterface $user)
-    {
-        $client = $clientRepository->find($id);
-        if ($client->getUser()->getId() != $user->getId()) {
-            if (!in_array('ADMIN', $user->getRoles())) {
-                throw new AccessDeniedException();
-            }
-        }
-
-        $clientInsurance = new ClientInsurance();
-        $clientInsurance->setClientId($id);
-
-        $form = $this->createForm(UmbrellaInsuranceFormType::class, $clientInsurance);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $clientInsurance->setInsuranceObjectsTypesId(InsuranceTypes::UMBRELLA);
-            $entityManager->persist($clientInsurance);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('insuranceList', ['id' => $id]);
-        }
-
-        return $this->render('client/add-insurance-item.html.twig', [
-            'controller_name' => 'ClientController',
-            'addInsuranceForm' => $form->createView(),
-            'clientId' => $id,
-            'title' => "Add client's insurance | Umbrella"
-        ]);
-    }
-
-    #[Route('/client/{id}/add-insurance-other', name: 'add-insurance-other')]
-    public function addInsuranceOther(Request $request, $id, ClientRepository $clientRepository, UserInterface $user)
-    {
-        $client = $clientRepository->find($id);
-        if ($client->getUser()->getId() != $user->getId()) {
-            if (!in_array('ADMIN', $user->getRoles())) {
-                throw new AccessDeniedException();
-            }
-        }
-
-        $clientInsurance = new ClientInsurance();
-        $clientInsurance->setClientId($id);
-
-        $form = $this->createForm(OtherInsuranceFormType::class, $clientInsurance);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $clientInsurance->setInsuranceObjectsTypesId(InsuranceTypes::OTHER);
-            $entityManager->persist($clientInsurance);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('insuranceList', ['id' => $id]);
-        }
-
-        return $this->render('client/add-insurance-item.html.twig', [
-            'controller_name' => 'ClientController',
-            'addInsuranceForm' => $form->createView(),
-            'clientId' => $id,
-            'title' => "Add client's insurance | Other"
-        ]);
-    }
-
     #[Route('/client/insurance/delete/{id}', name: 'delete-ins', methods:['DELETE'])]
-    public function deleteInsurance($id, ClientRepository $clientRepository, UserInterface $user)
+    public function deleteInsurance($id, ClientRepository $clientRepository, UserInterface $user, ClientInsuranceRepository $clientInsuranceRepository, ManagerRegistry $managerRegistry)
     {
-        $clientInsurance = $this->getDoctrine()->getRepository(ClientInsurance::class)->find($id);
+        $clientInsurance = $clientInsuranceRepository->find($id);
 
         $client = $clientRepository->find($clientInsurance->getClientId());
         if ($client->getUser()->getId() != $user->getId()) {
@@ -411,7 +258,7 @@ class ClientController extends AbstractController
             }
         }
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $managerRegistry->getManager();
 
         $entityManager->remove($clientInsurance);
         $entityManager->flush();
@@ -421,9 +268,9 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/insurance/edit/{id}', name: 'edit-ins')]
-    public function editInsurance(UserInterface $user, Request $request, $id, ClientRepository $clientRepository): Response
+    public function editInsurance(UserInterface $user, Request $request, $id, ClientRepository $clientRepository, ClientInsuranceRepository $clientInsuranceRepository, ManagerRegistry $managerRegistry): Response
     {
-        $insuranse = $this->getDoctrine()->getRepository(ClientInsurance::class)->find($id);
+        $insuranse = $clientInsuranceRepository->find($id);
 
         $client = $clientRepository->find($insuranse->getClientId());
         if ($client->getUser()->getId() != $user->getId()) {
@@ -431,32 +278,12 @@ class ClientController extends AbstractController
                 throw new AccessDeniedException();
             }
         }
-
-        $type = $insuranse->getInsuranceObjectsTypesId();
-        $typeName = InsuranceTypes::NAMES[$type];
-
-        switch($typeName) {
-            case 'Home':
-                $form = $this->createForm(HomeInsuranceFormType::class, $insuranse);
-                break;
-            case 'Auto':
-                $form = $this->createForm(AutoInsuranceFormType::class, $insuranse);
-                break;
-            case 'Collectables':
-                $form = $this->createForm(CollectablesInsuranceFormType::class, $insuranse);
-                break;
-            case 'Umbrella':
-                $form = $this->createForm(UmbrellaInsuranceFormType::class, $insuranse);
-                break;
-            case 'Other':
-                $form = $this->createForm(OtherInsuranceFormType::class, $insuranse);
-                break;
-        }
-
+        
+        $form = $this->createForm(CreateClientInsuranceFormType::class, $insuranse);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $managerRegistry->getManager();
             $entityManager->flush();
 
             return $this->redirectToRoute('insuranceList', ['id' => $insuranse->getClientId()]);
@@ -470,7 +297,7 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/{id}/insurance/{insId}/upload-file', name: 'insurance-upload-file')]
-    public function uploadIns(Request $request, $id, $insId, ClientRepository $clientRepository, UserInterface $user): Response
+    public function uploadIns(Request $request, $id, $insId, ClientRepository $clientRepository, UserInterface $user, ManagerRegistry $managerRegistry): Response
     {
         $client = $clientRepository->find($id);
         if ($client->getUser()->getId() != $user->getId()) {
@@ -503,7 +330,7 @@ class ClientController extends AbstractController
                 $attachment->setName($fileName);
             }   
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $managerRegistry->getManager();
             $entityManager->persist($attachment);
             $entityManager->flush();
 
@@ -518,10 +345,10 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/insurance/delete-attachment/{attachmentId}', name: 'delete-ins-attachment', methods:['DELETE'])]
-    public function deleteInsAttachment($attachmentId, ClientRepository $clientRepository, UserInterface $user)
+    public function deleteInsAttachment($attachmentId, ClientRepository $clientRepository, UserInterface $user, InsuranceAttachmentsRepository $insuranceAttachmentsRepository, ClientInsuranceRepository $clientInsuranceRepository, ManagerRegistry $managerRegistry)
     {
-        $attachment = $this->getDoctrine()->getRepository(InsuranceAttachments::class)->find($attachmentId);
-        $insurance = $this->getDoctrine()->getRepository(ClientInsurance::class)->find($attachment->getInsuranceId());
+        $attachment = $insuranceAttachmentsRepository->find($attachmentId);
+        $insurance = $clientInsuranceRepository->find($attachment->getInsuranceId());
 
         $client = $clientRepository->find($insurance->getClientId());
         if ($client->getUser()->getId() != $user->getId()) {
@@ -530,7 +357,7 @@ class ClientController extends AbstractController
             }
         }
         
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $managerRegistry->getManager();
         $entityManager->remove($attachment);
         $entityManager->flush();
 
@@ -539,9 +366,9 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/delete-attachment/{id}', name: 'delete-attachment', methods:['DELETE'])]
-    public function deleteAttachment($id, ClientRepository $clientRepository, UserInterface $user)
+    public function deleteAttachment($id, ClientRepository $clientRepository, UserInterface $user, AttachmentsRepository $attachmentsRepository, ManagerRegistry $managerRegistry)
     {
-        $attachment = $this->getDoctrine()->getRepository(Attachments::class)->find($id);
+        $attachment = $attachmentsRepository->find($id);
 
         $client = $clientRepository->find($attachment->getUserId());
         if ($client->getUser()->getId() != $user->getId()) {
@@ -550,7 +377,7 @@ class ClientController extends AbstractController
             }
         }
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $managerRegistry->getManager();
         $entityManager->remove($attachment);
         $entityManager->flush();
 
@@ -559,7 +386,7 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/{id}/upload-file', name: 'upload-file')]
-    public function upload(Request $request, $id, ClientRepository $clientRepository, UserInterface $user): Response
+    public function upload(Request $request, $id, ClientRepository $clientRepository, UserInterface $user, ManagerRegistry $managerRegistry): Response
     {
         $client = $clientRepository->find($id);
         if ($client->getUser()->getId() != $user->getId()) {
@@ -592,7 +419,7 @@ class ClientController extends AbstractController
                 $attachment->setName($fileName);
             }
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $managerRegistry->getManager();
             $entityManager->persist($attachment);
             $entityManager->flush();
 

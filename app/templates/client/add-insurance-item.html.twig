@@ -22,4 +22,31 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).on('change', '#create_client_insurance_form_insuranceObjectsTypes', function() {
+        let $form = $(this).closest('form');
+        let $token = $form.find('#create_client_insurance_form__token');
+        let data = {};
+
+        data[$token.attr('name')] = $token.val();
+        data[$(this).attr('name')] = $(this).val();
+
+        $.ajax({
+            url : $form.attr('action'),
+            method: $form.attr('method'),
+            data : data,
+            complete: function(html) {
+            // Replace current position field ...
+            $form.replaceWith(
+                // ... with the returned one from the AJAX response.
+                $(html.responseText).find('form')
+            );
+            // Position field now displays the appropriate positions.
+            }
+        });
+    });
+
+</script>
+
 {% endblock %}

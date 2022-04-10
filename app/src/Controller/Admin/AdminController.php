@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
 use App\Entity\Client;
+use App\Entity\InsuranceObjectsTypes;
+use App\Entity\InsuranceObjectsTypesFields;
 
 class AdminController extends AbstractDashboardController
 {
@@ -31,5 +33,7 @@ class AdminController extends AbstractDashboardController
         yield MenuItem::linktoDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('Users', 'fa fa-users', User::class);
         yield MenuItem::linkToCrud('Clients', 'fa fa-users', Client::class);
+        yield MenuItem::linkToCrud('Insurance types', 'fa fa-list', InsuranceObjectsTypes::class);
+        yield MenuItem::linkToCrud('Insurance types fields', 'fa fa-list', InsuranceObjectsTypesFields::class);
     }
 }

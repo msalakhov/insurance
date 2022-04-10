@@ -19,6 +19,18 @@ class InsuranceObjectsTypesRepository extends ServiceEntityRepository
         parent::__construct($registry, InsuranceObjectsTypes::class);
     }
 
+    /**
+     * @return InsuranceObjectsTypes[] Returns an array of InsuranceObjectsTypes objects
+     */
+    public function findAll()
+    {
+        return $this->createQueryBuilder('i')
+            ->orderBy('i.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // /**
     //  * @return InsuranceObjectsTypes[] Returns an array of InsuranceObjectsTypes objects
     //  */
