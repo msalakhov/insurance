@@ -3,12 +3,14 @@
 namespace App\Form;
 
 use App\Entity\Client;
+use App\Entity\Gender;
 use DateTime;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Date;
@@ -30,6 +32,7 @@ class CreateClientFormType extends AbstractType
                     new Email(),
                 ]
             ])
+            ->add('gender', EnumType::class, ['class' => Gender::class])
             ->add('photo', FileType::class, [
                 'mapped' => false,
                 'required' => false,

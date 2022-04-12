@@ -7,6 +7,13 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+enum Gender: string
+{
+    case Chose = '';
+    case Male = 'male';
+    case Female = 'female';
+}
+
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
 class Client
@@ -38,6 +45,9 @@ class Client
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private $createdAt;
+
+    #[ORM\Column(type: 'string', length: 7, enumType: Gender::class)]
+    private $gender;
 
     public function getId(): ?int
     {
@@ -123,5 +133,17 @@ class Client
     public function setCreatedAtValue(): void
     {
         $this->createdAt = new \DateTimeImmutable();
+    }
+
+    public function getGender(): ?Gender
+    {
+        return $this->gender;
+    }
+
+    public function setGender(Gender $gender): self
+    {
+        $this->gender = $gender;
+
+        return $this;
     }
 }
