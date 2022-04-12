@@ -25,20 +25,9 @@ class SendRemindersCommand extends Command implements ContainerAwareInterface, L
     use ContainerAwareTrait;
     use LoggerAwareTrait;
 
-    /**
-     * @var MailerInterface
-     */
-    private $mailer;
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    public function __construct(MailerInterface $mailer, EntityManagerInterface $entityManager)
+    public function __construct(private MailerInterface $mailer, private EntityManagerInterface $entityManager)
     {
         parent::__construct();
-        $this->mailer = $mailer;
-        $this->entityManager = $entityManager;
     }
 
     protected function configure()
