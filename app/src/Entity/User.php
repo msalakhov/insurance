@@ -3,64 +3,47 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=UserRepository::class)
- * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity(fields: ["email"], message: "There is already an account with this email")]
+#[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue()]
+    #[ORM\Column(type: Types::INTEGER)]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=180, unique=true)
-     *
-     * @Assert\Email()
-     */
+    #[ORM\Column(type: Types::STRING, length: 180, unique: true)]
+    #[Assert\Email()]
     private $email;
 
-    /**
-     * @ORM\Column(type="json")
-     */
+    #[ORM\Column(type: Types::JSON)]
     private $roles = [];
 
-    /**
-     * @var string The hashed password
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Column(type: Types::STRING)]
     private $password;
 
     /**
      * @var string The plain password
      */
-    private $plainPassword;
+    private string $plainPassword;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Client::class, mappedBy="user", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: Client::class, mappedBy: "user", orphanRemoval: true)]
     private $clients;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: Types::BOOLEAN)]
     private $isVerified = false;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private $createdAt;
 
     public function __construct()
@@ -142,7 +125,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->plainPassword;
     }
 
-    public function setPlainPassword(string $plainPassword): self {
+    public function setPlainPassword(string $plainPassword): self
+    {
         $this->plainPassword = $plainPassword;
 
         return $this;
@@ -171,7 +155,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection|Client[]
      */
-    public function getClients(): Collection
+    public function getClients(): Collection|Client
     {
         return $this->clients;
     }
@@ -215,10 +199,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->createdAt;
     }
 
-    /**
-     * @ORM\PrePersist
-     */
-    public function setCreatedAtValue()
+    #[ORM\PrePersist]
+    public function setCreatedAtValue(): void
     {
         $this->createdAt = new \DateTimeImmutable();
     }

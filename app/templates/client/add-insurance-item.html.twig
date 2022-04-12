@@ -27,10 +27,12 @@
     $(document).on('change', '#create_client_insurance_form_insuranceObjectsTypes', function() {
         let $form = $(this).closest('form');
         let $token = $form.find('#create_client_insurance_form__token');
+        let $user = $form.find('#create_client_insurance_form_clientId');
         let data = {};
 
         data[$token.attr('name')] = $token.val();
         data[$(this).attr('name')] = $(this).val();
+        data[$user.attr('name')] = $user.val();
 
         $.ajax({
             url : $form.attr('action'),

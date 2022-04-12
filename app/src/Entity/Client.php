@@ -3,66 +3,41 @@
 namespace App\Entity;
 
 use App\Repository\ClientRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\ClientRepository", repositoryClass=ClientRepository::class)
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity(repositoryClass: ClientRepository::class)]
+#[ORM\HasLifecycleCallbacks()]
 class Client
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue()]
+    #[ORM\Column(type: Types::INTEGER)]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     *
-     * @Assert\NotBlank()
-     */
+    #[ORM\Column(type: Types::STRING, length: 50)]
+    #[Assert\NotBlank()]
     private $name;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
+    #[ORM\Column(type: Types::STRING, length: 100, nullable: true)]
     private $city;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private $photo;
 
-    /**
-     * @ORM\Column(type="string", nullable=false)
-     */
+    #[ORM\Column(type: Types::STRING, nullable: false)]
     private $email;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="clients")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "clients")]
+    #[ORM\JoinColumn(nullable: false)]
     private $user;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private $renewal_term;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private $createdAt;
-
-    // public function __construct($name, $city, $photo)
-    // {
-    //     $this->name = $name;
-    //     $this->city = $city;
-    //     $this->photo = $photo;
-    // }
 
     public function getId(): ?int
     {
@@ -144,9 +119,7 @@ class Client
         return $this->createdAt;
     }
 
-    /**
-     * @ORM\PrePersist
-     */
+    #[ORM\PrePersist]
     public function setCreatedAtValue(): void
     {
         $this->createdAt = new \DateTimeImmutable();

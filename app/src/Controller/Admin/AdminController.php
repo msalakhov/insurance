@@ -14,9 +14,7 @@ use App\Entity\InsuranceObjectsTypesFields;
 
 class AdminController extends AbstractDashboardController
 {
-    /**
-     * @Route("/admin", name="admin")
-     */
+    #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
         return parent::index();

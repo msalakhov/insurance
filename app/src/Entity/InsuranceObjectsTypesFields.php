@@ -3,44 +3,31 @@
 namespace App\Entity;
 
 use App\Repository\InsuranceObjectsTypesFieldsRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=InsuranceObjectsTypesFieldsRepository::class)
- */
+#[ORM\Entity(repositoryClass: InsuranceObjectsTypesFieldsRepository::class)]
 class InsuranceObjectsTypesFields
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue()]
+    #[ORM\Column(type: Types::INTEGER)]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
+    #[ORM\Column(type: Types::STRING, length: 100)]
     private $name;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
+    #[ORM\Column(type: Types::STRING, length: 100)]
     private $type;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
+    #[ORM\Column(type: Types::STRING, length: 100, nullable: true)]
     private $label;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: Types::BOOLEAN)]
     private $required;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=InsuranceObjectsTypes::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: InsuranceObjectsTypes::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $insuranceType;
 
     public function getId(): ?int

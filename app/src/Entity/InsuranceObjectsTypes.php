@@ -5,39 +5,27 @@ namespace App\Entity;
 use App\Repository\InsuranceObjectsTypesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=InsuranceObjectsTypesRepository::class)
- */
+#[ORM\Entity(repositoryClass: InsuranceObjectsTypesRepository::class)]
 class InsuranceObjectsTypes
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue()]
+    #[ORM\Column(type: Types::INTEGER)]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
+    #[ORM\Column(type: Types::STRING, length: 100, nullable: true)]
     private $name;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ClientInsurance::class, mappedBy="insuranceObjectsTypes")
-     */
+    #[ORM\OneToMany(targetEntity: ClientInsurance::class, mappedBy: "insuranceObjectsTypes")]
     private $insurance;
 
     public function __construct()
     {
         $this->insurance = new ArrayCollection();
     }
-
-    // public function __construct($type)
-    // {
-    //     $this->type = $type;
-    // }
 
     public function getId(): ?int
     {
@@ -56,9 +44,6 @@ class InsuranceObjectsTypes
         return $this;
     }
 
-    /**
-     * @return Collection<int, ClientInsurance>
-     */
     public function getInsurance(): Collection
     {
         return $this->insurance;

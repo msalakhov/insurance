@@ -2,14 +2,12 @@
 
 namespace App\DataFixtures;
 
-use App\ImageOptimizer;
 use App\Entity\Client;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Faker\Generator;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class ClientFixture extends Fixture implements DependentFixtureInterface
 {
